@@ -1,0 +1,163 @@
+# Prometheus Trading System Configuration
+
+# 系统基础配置
+system:
+  name: "Prometheus Trading System"
+  version: "0.1.0"
+  environment: "development"  # development, testing, production
+  debug: true
+  timezone: "UTC"
+
+# 服务配置
+services:
+  gateway:
+    host: "0.0.0.0"
+    port: 8001
+    workers: 1
+    
+  datahub:
+    host: "0.0.0.0"
+    port: 8002
+    workers: 1
+    
+  alpha_engine:
+    host: "0.0.0.0"
+    port: 8003
+    workers: 1
+    
+  portfolio_manager:
+    host: "0.0.0.0"
+    port: 8004
+    workers: 1
+    
+  executioner:
+    host: "0.0.0.0"
+    port: 8005
+    workers: 1
+    
+  risk_sentinel:
+    host: "0.0.0.0"
+    port: 8006
+    workers: 1
+    
+  monitor:
+    host: "0.0.0.0"
+    port: 8007
+    workers: 1
+
+# 币安API配置
+binance:
+  base_url: "https://api.binance.com"
+  testnet_url: "https://testnet.binance.vision"
+  websocket_url: "wss://stream.binance.com:9443"
+  testnet_websocket_url: "wss://testnet.binance.vision"
+  timeout: 30
+  retry_attempts: 3
+  retry_delay: 1
+
+# 数据库配置
+databases:
+  postgres:
+    pool_size: 10
+    max_overflow: 20
+    pool_timeout: 30
+    pool_recycle: 3600
+    
+  influxdb:
+    timeout: 30
+    batch_size: 1000
+    flush_interval: 10
+    
+  redis:
+    max_connections: 100
+    retry_on_timeout: true
+    socket_timeout: 30
+
+# 交易配置
+trading:
+  # 支持的交易对
+  symbols:
+    - "BTCUSDT"
+    - "ETHUSDT"
+    - "BNBUSDT"
+    - "ADAUSDT"
+    - "DOTUSDT"
+    
+  # 交易参数
+  min_order_size: 10.0  # USDT
+  max_order_size: 1000.0  # USDT
+  price_precision: 8
+  quantity_precision: 8
+  
+  # 滑点控制
+  max_slippage: 0.001  # 0.1%
+  
+# 风险管理配置
+risk_management:
+  # 全局风险限制
+  max_total_position: 0.8  # 最大总仓位比例
+  max_single_position: 0.2  # 单一资产最大仓位比例
+  max_daily_loss: 0.05  # 最大日损失比例
+  max_drawdown: 0.15  # 最大回撤比例
+  
+  # 止损设置
+  stop_loss_threshold: 0.02  # 2%止损
+  emergency_stop_threshold: 0.05  # 5%紧急止损
+  
+  # 风险检查频率
+  check_interval: 5  # 秒
+
+# 策略配置
+strategies:
+  # 策略权重
+  weights:
+    mean_reversion: 0.4
+    trend_following: 0.4
+    market_regime: 0.2
+    
+  # 策略参数
+  mean_reversion:
+    lookback_period: 20
+    entry_threshold: 2.0  # 标准差倍数
+    exit_threshold: 0.5
+    
+  trend_following:
+    short_window: 10
+    long_window: 30
+    momentum_threshold: 0.01
+    
+  market_regime:
+    states: 2  # 市场状态数量
+    lookback_period: 100
+    transition_threshold: 0.7
+
+# 监控配置
+monitoring:
+  # 指标收集
+  metrics_interval: 10  # 秒
+  
+  # 告警配置
+  alerts:
+    email:
+      enabled: false
+      smtp_server: "smtp.gmail.com"
+      smtp_port: 587
+      
+    webhook:
+      enabled: false
+      url: "https://hooks.slack.com/services/..."
+      
+  # 日志配置
+  logging:
+    level: "INFO"
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    max_file_size: "10MB"
+    backup_count: 5
+
+# 回测配置
+backtest:
+  start_date: "2023-01-01"
+  end_date: "2023-12-31"
+  initial_capital: 10000.0  # USDT
+  commission: 0.001  # 0.1%
+  slippage: 0.0005  # 0.05%

@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # Redis缓存和消息队列
+  redis:
+    image: redis:7-alpine
+    container_name: prometheus-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - prometheus-network
+
+  # PostgreSQL关系型数据库
+  postgres:
+    image: postgres:15-alpine
+    container_name: prometheus-postgres
+    environment:
+      POSTGRES_DB: prometheus
+      POSTGRES_USER: prometheus
+      POSTGRES_PASSWORD: prometheus_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    restart: unless-stopped
+    networks:
+      - prometheus-network
+
+  # InfluxDB时序数据库
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: prometheus-influxdb
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: prometheus
+      DOCKER_INFLUXDB_INIT_PASSWORD: prometheus_password
+      DOCKER_INFLUXDB_INIT_ORG: prometheus
+      DOCKER_INFLUXDB_INIT_BUCKET: trading_data
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: prometheus_admin_token
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_config:/etc/influxdb2
+    restart: unless-stopped
+    networks:
+      - prometheus-network
+
+  # Grafana监控面板
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: prometheus-grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: prometheus_admin
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./configs/grafana:/etc/grafana/provisioning
+    restart: unless-stopped
+    networks:
+      - prometheus-network
+    depends_on:
+      - influxdb
+      - postgres
+
+  # Prometheus监控系统
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: prometheus-monitor
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - prometheus-network
+
+volumes:
+  redis_data:
+  postgres_data:
+  influxdb_data:
+  influxdb_config:
+  grafana_data:
+  prometheus_data:
+
+networks:
+  prometheus-network:
+    driver: bridge
