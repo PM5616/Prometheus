@@ -20,10 +20,9 @@ from collections import defaultdict, deque
 import uuid
 import json
 
-from ..common.logging import get_logger
-from ..common.exceptions.execution import ExecutionEngineError, OrderExecutionError
-from ..alpha_engine.base import StrategySignal
-from ..risk_sentinel.manager import RiskManager
+from src.common.logging import get_logger
+from src.common.exceptions.execution import ExecutionEngineError, OrderExecutionError
+from src.alpha_engine.base import StrategySignal
 
 
 class ExecutionMode(Enum):
@@ -44,7 +43,7 @@ class ExecutionStatus(Enum):
     EMERGENCY_STOP = "emergency_stop" # 紧急停止
 
 
-from ..common.models import OrderSide, OrderType, OrderStatus
+from src.common.models import OrderSide, OrderType, OrderStatus
 
 
 @dataclass
@@ -242,7 +241,7 @@ class ExecutionEngine:
     负责整体执行流程的协调和管理。
     """
     
-    def __init__(self, config: Dict = None, risk_manager: RiskManager = None):
+    def __init__(self, config: Dict = None, risk_manager: 'RiskManager' = None):
         """初始化执行引擎
         
         Args:
@@ -510,7 +509,7 @@ class ExecutionEngine:
         Returns:
             Optional[ExecutionOrder]: 执行订单
         """
-        from ..alpha_engine.signal import SignalType
+        from src.alpha_engine.signal import SignalType
         
         if signal.signal_type == SignalType.BUY:
             side = OrderSide.BUY
@@ -558,6 +557,9 @@ class ExecutionEngine:
             return True
         
         try:
+            # 延迟导入以避免循环导入
+            from src.risk_sentinel.manager import RiskManager
+            
             # 这里可以实现更详细的风险检查逻辑
             # 例如检查持仓限制、资金充足性等
             return True

@@ -11,8 +11,8 @@ from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
 from enum import Enum
 
-from ..common.exceptions.base import PrometheusException
-from ..common.models.base import BaseModel
+from src.common.exceptions.base import PrometheusException
+from src.common.models.base import BaseModel
 from .models import Portfolio, Position, Signal, SignalType, PositionType
 
 

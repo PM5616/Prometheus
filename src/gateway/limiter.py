@@ -16,10 +16,10 @@ from dataclasses import dataclass, field
 from enum import Enum
 import json
 from collections import defaultdict, deque
-import aioredis
+import redis.asyncio as redis
 
-from ..common.logging.logger import get_logger
-from ..common.exceptions.gateway_exceptions import RateLimitError
+from src.common.logging import get_logger
+from src.common.exceptions.gateway_exceptions import RateLimitError
 
 
 class LimitAlgorithm(Enum):
@@ -118,7 +118,7 @@ class RateLimiter:
         self.states: Dict[str, LimitState] = {}
         
         # Redis连接
-        self.redis: Optional[aioredis.Redis] = None
+        self.redis: Optional[redis.Redis] = None
         
         # 统计信息
         self.stats = {
@@ -143,7 +143,7 @@ class RateLimiter:
         # 初始化Redis连接（用于分布式限流）
         if self.config.distributed and redis_url:
             try:
-                self.redis = aioredis.from_url(redis_url)
+                self.redis = redis.from_url(redis_url)
                 await self.redis.ping()
                 self.logger.info("Redis连接初始化成功，启用分布式限流")
             except Exception as e:

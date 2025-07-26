@@ -20,10 +20,10 @@ from dataclasses import dataclass, field
 from enum import Enum
 import asyncio
 from aiohttp import web
-import aioredis
+import redis.asyncio as redis
 
-from ..common.logging.logger import get_logger
-from ..common.exceptions.gateway_exceptions import AuthenticationError, AuthorizationError
+from src.common.logging import get_logger
+from src.common.exceptions.gateway_exceptions import AuthenticationError, AuthorizationError
 
 
 class AuthType(Enum):
@@ -192,7 +192,7 @@ class AuthManager:
         self.login_attempts: Dict[str, List[float]] = {}
         
         # Redis连接
-        self.redis: Optional[aioredis.Redis] = None
+        self.redis: Optional[redis.Redis] = None
         
         # 自定义认证器
         self.custom_authenticators: Dict[str, Callable] = {}
@@ -214,7 +214,7 @@ class AuthManager:
         # 初始化Redis连接
         if self.config.redis_url:
             try:
-                self.redis = aioredis.from_url(self.config.redis_url)
+                self.redis = redis.from_url(self.config.redis_url)
                 await self.redis.ping()
                 self.logger.info("Redis连接初始化成功")
             except Exception as e:

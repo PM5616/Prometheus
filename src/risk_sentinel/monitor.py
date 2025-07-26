@@ -17,9 +17,9 @@ from .models import (
     RiskType, RiskLevel, AlertType, AlertStatus, RiskMetric, 
     RiskAlert, RiskLimit, RiskEvent, RiskConfig
 )
-from ..common.logger import get_logger
-from ..common.events import EventBus
-from ..portfolio_manager.models import Portfolio, Position
+from src.common.logging import get_logger
+from src.common.events import EventBus
+from src.portfolio_manager.models import Portfolio, Position
 
 
 class RiskMonitor:

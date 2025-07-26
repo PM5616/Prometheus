@@ -24,25 +24,23 @@
 - ExecutionAlgorithm: 执行算法
 """
 
-from .engine import ExecutionEngine
-from .order_manager import OrderManager, Order, OrderStatus, OrderType
-from .trade_router import TradeRouter, Route
-from .market_connector import MarketConnector, MarketData
-from .algorithms import ExecutionAlgorithm, TWAPAlgorithm, VWAPAlgorithm
+from .engine import ExecutionEngine, ExecutionOrder, OrderStatus, OrderType, OrderSide, Trade
+from .order_manager import OrderManager
+from .trade_router import TradeRouter
+from .market_connector import BaseMarketConnector, MockMarketConnector, MarketConnectorManager
 
 __all__ = [
     'ExecutionEngine',
+    'ExecutionOrder',
     'OrderManager',
-    'Order',
     'OrderStatus',
     'OrderType',
+    'OrderSide',
+    'Trade',
     'TradeRouter',
-    'Route',
-    'MarketConnector',
-    'MarketData',
-    'ExecutionAlgorithm',
-    'TWAPAlgorithm',
-    'VWAPAlgorithm'
+    'BaseMarketConnector',
+    'MockMarketConnector',
+    'MarketConnectorManager'
 ]
 
 __version__ = '1.0.0'

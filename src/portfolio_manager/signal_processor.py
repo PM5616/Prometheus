@@ -12,8 +12,8 @@ from dataclasses import asdict
 from enum import Enum
 from collections import defaultdict, deque
 
-from ..common.exceptions.base import PrometheusException
-from ..common.models.base import BaseModel
+from src.common.exceptions.base import PrometheusException
+from src.common.models.base import BaseModel
 from .models import Signal, SignalType, SignalStrength, PositionType
 
 
@@ -497,7 +497,7 @@ class SignalProcessor(BaseModel):
         """将信号强度转换为权重"""
         strength_weights = {
             SignalStrength.WEAK: 0.5,
-            SignalStrength.MEDIUM: 1.0,
+            SignalStrength.MODERATE: 1.0,
             SignalStrength.STRONG: 1.5,
             SignalStrength.VERY_STRONG: 2.0
         }
@@ -507,7 +507,7 @@ class SignalProcessor(BaseModel):
         """将信号强度转换为数值"""
         strength_values = {
             SignalStrength.WEAK: 1.0,
-            SignalStrength.MEDIUM: 2.0,
+            SignalStrength.MODERATE: 2.0,
             SignalStrength.STRONG: 3.0,
             SignalStrength.VERY_STRONG: 4.0
         }
@@ -518,7 +518,7 @@ class SignalProcessor(BaseModel):
         if value < 1.5:
             return SignalStrength.WEAK
         elif value < 2.5:
-            return SignalStrength.MEDIUM
+            return SignalStrength.MODERATE
         elif value < 3.5:
             return SignalStrength.STRONG
         else:
@@ -527,7 +527,7 @@ class SignalProcessor(BaseModel):
     def _average_strength(self, strengths: List[SignalStrength]) -> SignalStrength:
         """计算平均强度"""
         if not strengths:
-            return SignalStrength.MEDIUM
+            return SignalStrength.MODERATE
         
         values = [self._strength_to_value(s) for s in strengths]
         avg_value = sum(values) / len(values)

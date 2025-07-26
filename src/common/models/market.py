@@ -305,3 +305,8 @@ class MarketData(TimestampMixin, BaseModel):
         elif self.latest_kline:
             return self.latest_kline.close_price
         return None
+
+
+# 为了向后兼容，创建别名
+KlineData = Kline
+OrderBookEntry = OrderBookLevel

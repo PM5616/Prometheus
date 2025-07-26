@@ -16,7 +16,7 @@ from datetime import datetime
 import pandas as pd
 import logging
 
-from ...common.models.market_data import Kline, Ticker, OrderBook
+from ...common.models.market import Kline, Ticker, OrderBook
 from ...common.exceptions.data import DataProcessingError
 
 

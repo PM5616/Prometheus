@@ -4,23 +4,43 @@
 """
 
 import json
-import pandas as pd
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any, Union
 from dataclasses import dataclass, asdict
 from pathlib import Path
-import matplotlib.pyplot as plt
-import seaborn as sns
-from jinja2 import Template
 import warnings
 warnings.filterwarnings('ignore')
+
+# 可选依赖导入
+try:
+    import pandas as pd
+    HAS_PANDAS = True
+except ImportError:
+    HAS_PANDAS = False
+    pd = None
+
+try:
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    HAS_PLOTTING = True
+except ImportError:
+    HAS_PLOTTING = False
+    plt = None
+    sns = None
+
+try:
+    from jinja2 import Template
+    HAS_JINJA2 = True
+except ImportError:
+    HAS_JINJA2 = False
+    Template = None
 
 from .models import (
     RiskType, RiskLevel, RiskAlert, RiskEvent, RiskConfig
 )
 from .analyzer import RiskAnalyzer, VaRResult, StressTestResult, RiskAttribution
-from ..common.logger import get_logger
-from ..portfolio_manager.models import Portfolio
+from src.common.logging import get_logger
+from src.portfolio_manager.models import Portfolio
 
 
 @dataclass
@@ -64,7 +84,7 @@ class RiskReporter:
     7. 报告导出
     """
     
-    def __init__(self, config: ReportConfig, risk_analyzer: RiskAnalyzer):
+    def __init__(self, config: ReportConfig, risk_analyzer: RiskAnalyzer = None):
         self.config = config
         self.risk_analyzer = risk_analyzer
         self.logger = get_logger(self.__class__.__name__)
@@ -76,9 +96,17 @@ class RiskReporter:
         self.charts_path = self.output_path / "charts"
         self.charts_path.mkdir(exist_ok=True)
         
-        # 设置图表样式
-        plt.style.use('seaborn-v0_8')
-        sns.set_palette("husl")
+        # 设置图表样式（如果可用）
+        if HAS_PLOTTING:
+            try:
+                plt.style.use('seaborn-v0_8')
+                sns.set_palette("husl")
+            except Exception:
+                # 如果seaborn样式不可用，使用默认样式
+                pass
+        else:
+            self.logger.warning("Plotting libraries not available. Charts will be disabled.")
+            self.config.include_charts = False
     
     def generate_daily_risk_report(self, portfolio: Portfolio, 
                                  alerts: List[RiskAlert] = None,

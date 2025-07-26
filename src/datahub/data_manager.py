@@ -35,9 +35,9 @@ from .processors.technical_indicators import TechnicalIndicators
 from .processors.data_validator import DataValidator
 from .processors.stream_processor import StreamProcessor
 
-from ..common.exceptions.data import DataManagerError, DataProviderError, DataStorageError
-from ..common.logging import get_logger
-from ..common.models.market_data import Kline, Ticker, OrderBook
+from src.common.exceptions.data import DataManagerError, DataProviderError, DataStorageError
+from src.common.logging import get_logger
+from src.common.models.market import Kline, Ticker, OrderBook
 
 
 class DataPipeline:

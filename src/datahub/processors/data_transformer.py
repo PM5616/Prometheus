@@ -18,7 +18,7 @@ import time
 import json
 
 from .base import BaseProcessor, ProcessorType, ProcessingResult
-from ...common.models.market_data import Kline, Ticker, OrderBook
+from ...common.models.market import Kline, Ticker, OrderBook
 from ...common.exceptions.data import DataProcessingError
 
 

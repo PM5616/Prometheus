@@ -435,3 +435,94 @@ def decrypt_config_value(encrypted_value: str, key: str) -> str:
     except Exception as e:
         logger.error(f"Error decrypting config value: {e}")
         return encrypted_value
+
+
+# 为了兼容性，添加一些别名函数
+def encrypt_data(data: Union[str, bytes], key: Optional[str] = None) -> str:
+    """加密数据（兼容性函数）
+    
+    Args:
+        data: 要加密的数据
+        key: 加密密钥
+        
+    Returns:
+        str: 加密后的数据
+    """
+    try:
+        if key:
+            crypto = CryptoUtils(base64.b64decode(key.encode('utf-8')))
+        else:
+            crypto = CryptoUtils()
+        
+        return crypto.encrypt(data)
+    except Exception as e:
+        logger.error(f"Error encrypting data: {e}")
+        return ""
+
+
+def decrypt_data(encrypted_data: str, key: str) -> str:
+    """解密数据（兼容性函数）
+    
+    Args:
+        encrypted_data: 加密的数据
+        key: 解密密钥
+        
+    Returns:
+        str: 解密后的数据
+    """
+    try:
+        crypto = CryptoUtils(base64.b64decode(key.encode('utf-8')))
+        return crypto.decrypt(encrypted_data)
+    except Exception as e:
+        logger.error(f"Error decrypting data: {e}")
+        return ""
+
+
+def hash_data(data: Union[str, bytes], algorithm: str = 'sha256') -> str:
+    """计算数据哈希值（兼容性函数）
+    
+    Args:
+        data: 要哈希的数据
+        algorithm: 哈希算法
+        
+    Returns:
+        str: 哈希值
+    """
+    try:
+        if isinstance(data, str):
+            data = data.encode('utf-8')
+        
+        if algorithm.lower() == 'sha256':
+            hash_func = hashlib.sha256()
+        elif algorithm.lower() == 'sha1':
+            hash_func = hashlib.sha1()
+        elif algorithm.lower() == 'md5':
+            hash_func = hashlib.md5()
+        else:
+            raise ValueError(f"Unsupported hash algorithm: {algorithm}")
+        
+        hash_func.update(data)
+        return hash_func.hexdigest()
+    except Exception as e:
+        logger.error(f"Error hashing data: {e}")
+        return ""
+
+
+def validate_signature(message: str, signature: str, secret: str, algorithm: str = 'sha256') -> bool:
+    """验证签名（兼容性函数）
+    
+    Args:
+        message: 原始消息
+        signature: 签名
+        secret: 密钥
+        algorithm: 哈希算法
+        
+    Returns:
+        bool: 验证结果
+    """
+    try:
+        expected_signature = generate_api_signature(secret, message, algorithm)
+        return secure_compare(signature, expected_signature)
+    except Exception as e:
+        logger.error(f"Error validating signature: {e}")
+        return False

@@ -24,12 +24,12 @@ import pandas as pd
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
-from ..common.logging import get_logger
-from ..common.exceptions.backtest import BacktestError
-from ..alpha_engine.base import BaseStrategy, StrategySignal
-from ..execution.engine import ExecutionOrder, Trade, OrderStatus, OrderType, OrderSide
-from ..risk_sentinel.manager import RiskManager
-from ..datahub.data_manager import DataManager
+from src.common.logging import get_logger
+from src.common.exceptions.backtest import BacktestError
+from src.alpha_engine.base import BaseStrategy, StrategySignal
+from src.execution.engine import ExecutionOrder, Trade, OrderStatus, OrderType, OrderSide
+from src.risk_sentinel.manager import RiskManager
+from src.datahub.data_manager import DataManager
 
 
 class BacktestMode(Enum):
@@ -856,7 +856,7 @@ class BacktestEngine:
         Returns:
             Optional[ExecutionOrder]: 订单
         """
-        from ..alpha_engine.signal import SignalType
+        from src.alpha_engine.signal import SignalType
         
         # 确定订单方向
         if signal.signal_type == SignalType.BUY:

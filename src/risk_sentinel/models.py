@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Any, Union
 from dataclasses import dataclass, field
 from enum import Enum
 
-from ..common.models import RiskLevel, AlertType
+from src.common.models import RiskLevel, AlertType
 
 
 class RiskType(Enum):
@@ -28,7 +28,7 @@ class RiskType(Enum):
 
 
 
-from ..common.models import AlertStatus
+from src.common.models import AlertStatus
 
 
 class ControlAction(Enum):

@@ -32,6 +32,10 @@ class StrategyException(PrometheusException):
         super().__init__(message, **kwargs)
 
 
+# 为了向后兼容，创建别名
+StrategyError = StrategyException
+
+
 class StrategyNotFoundError(StrategyException):
     """策略未找到异常"""
     
@@ -72,6 +76,10 @@ class StrategyConfigurationError(StrategyException):
             details['config_errors'] = config_errors
         kwargs['details'] = details
         super().__init__(message, **kwargs)
+
+
+# 为了向后兼容，创建别名
+StrategyConfigError = StrategyConfigurationError
 
 
 class StrategyInitializationError(StrategyException):

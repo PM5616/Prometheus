@@ -10,7 +10,7 @@
 - 数据缓存管理
 """
 
-from .core.data_manager import DataManager
+from .data_manager import DataManager
 from .data_router import DataRouter, RouteTarget, RoutingRule, RoutingStrategy
 from .data_pipeline import DataPipeline, PipelineStage, StageConfig, StageResult, StageType, ExecutionMode
 from .quality_checker import DataQualityChecker, QualityRule, QualityCheck, QualityReport, CheckType, Severity

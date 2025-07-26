@@ -15,7 +15,7 @@ from .base_strategy import BaseStrategy as AlphaBaseStrategy, StrategyConfig, St
 from .signal import Signal, SignalType, SignalStrength, SignalSource
 from .strategy_loader import StrategyLoader
 from .strategy_manager import StrategyManager
-from .engine import AlphaEngine
+from .engine import StrategyEngine as AlphaEngine
 
 # 兼容性导入 - 保持与原strategy模块的兼容性
 from .base import BaseStrategy, StrategySignal, StrategyParameters, StrategyState

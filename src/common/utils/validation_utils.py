@@ -876,3 +876,41 @@ def comprehensive_data_validation(df: pd.DataFrame,
             'error': str(e),
             'validation_timestamp': datetime.now().isoformat()
         }
+
+
+def validate_order(order: Dict[str, Any]) -> bool:
+    """验证订单（兼容性函数）
+    
+    Args:
+        order: 订单数据
+        
+    Returns:
+        bool: 验证结果
+    """
+    try:
+        is_valid, errors = validate_order_data(order)
+        if not is_valid:
+            logger.warning(f"Order validation failed: {errors}")
+        return is_valid
+    except Exception as e:
+        logger.error(f"Error validating order: {e}")
+        return False
+
+
+def validate_config(config: Dict[str, Any]) -> bool:
+    """验证配置（兼容性函数）
+    
+    Args:
+        config: 配置数据
+        
+    Returns:
+        bool: 验证结果
+    """
+    try:
+        is_valid, errors = validate_config_file(config)
+        if not is_valid:
+            logger.warning(f"Config validation failed: {errors}")
+        return is_valid
+    except Exception as e:
+        logger.error(f"Error validating config: {e}")
+        return False

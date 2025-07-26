@@ -19,9 +19,9 @@ from collections import defaultdict, deque
 import psutil
 import aiohttp
 
-from ..common.logging.logger import get_logger
-from ..common.exceptions.gateway_exceptions import MonitorError
-from ..common.models import AlertLevel, HealthStatus, MetricType
+from src.common.logging import get_logger
+from src.common.exceptions.gateway_exceptions import MonitorError
+from src.common.models import AlertLevel, HealthStatus, MetricType
 
 
 class TimerType(Enum):

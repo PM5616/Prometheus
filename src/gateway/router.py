@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 import fnmatch
 
-from ..common.logging.logger import get_logger
+from src.common.logging import get_logger
 
 
 class RouteType(Enum):

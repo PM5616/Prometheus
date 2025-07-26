@@ -21,8 +21,8 @@ import pandas as pd
 import numpy as np
 
 from .signal import Signal, SignalType, SignalStrength, SignalSource
-from ..common.models.market_data import MarketData, KlineData
-from ..common.exceptions.strategy_exceptions import StrategyError, StrategyConfigError
+from src.common.models.market import MarketData, KlineData
+from src.common.exceptions.strategy_exceptions import StrategyError, StrategyConfigError
 
 
 @dataclass

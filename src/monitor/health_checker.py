@@ -21,12 +21,12 @@ from enum import Enum
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
 
-from ..common.logging.logger import get_logger
-from ..common.exceptions.monitor_exceptions import MonitorError
-from ..common.models import HealthStatus
+from src.common.logging.logger import get_logger
+from src.common.exceptions.monitor_exceptions import MonitorError
+from src.common.models import HealthStatus
 
 
-from ..common.models import CheckType
+from src.common.models import CheckType
 
 
 @dataclass

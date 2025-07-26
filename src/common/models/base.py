@@ -16,19 +16,14 @@ class BaseModel(PydanticBaseModel):
     所有数据模型的基类，提供通用功能。
     """
     
-    class Config:
+    model_config = {
         # 允许使用Decimal类型
-        arbitrary_types_allowed = True
-        # JSON编码器
-        json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            Decimal: lambda v: str(v),
-            uuid.UUID: lambda v: str(v)
-        }
+        "arbitrary_types_allowed": True,
         # 验证赋值
-        validate_assignment = True
+        "validate_assignment": True,
         # 使用枚举值
-        use_enum_values = True
+        "use_enum_values": True
+    }
     
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典
@@ -36,7 +31,7 @@ class BaseModel(PydanticBaseModel):
         Returns:
             Dict[str, Any]: 字典表示
         """
-        return self.dict()
+        return self.model_dump()
     
     def to_json(self) -> str:
         """转换为JSON字符串
@@ -44,7 +39,7 @@ class BaseModel(PydanticBaseModel):
         Returns:
             str: JSON字符串
         """
-        return self.json()
+        return self.model_dump_json()
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]):
@@ -68,7 +63,7 @@ class BaseModel(PydanticBaseModel):
         Returns:
             BaseModel: 模型实例
         """
-        return cls.parse_raw(json_str)
+        return cls.model_validate_json(json_str)
 
 
 class TimestampMixin(BaseModel):

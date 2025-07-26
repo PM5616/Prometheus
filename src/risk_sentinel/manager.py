@@ -20,11 +20,11 @@ from .models import (
     RiskAlert, RiskLimit, RiskEvent, RiskConfig, ControlAction
 )
 from .monitor import RiskMonitor
-from .controller import RiskController
 from .reporter import RiskReporter
-from ..common.logger import get_logger
-from ..common.events import EventBus
-from ..portfolio_manager.models import Portfolio, Position
+# 延迟导入controller以避免循环导入
+from src.common.logging import get_logger
+from src.common.events import EventBus
+from src.portfolio_manager.models import Portfolio, Position
 
 
 class RiskManager:
@@ -42,8 +42,12 @@ class RiskManager:
         
         # 初始化子模块
         self.monitor = RiskMonitor(config, event_bus)
-        self.controller = RiskController(config, event_bus)
-        self.reporter = RiskReporter(config, event_bus)
+        self.controller = None  # 延迟初始化
+        
+        # 创建报告配置并初始化reporter
+        from .reporter import ReportConfig
+        report_config = ReportConfig()
+        self.reporter = RiskReporter(report_config)
         
         # 管理状态
         self.is_running = False
@@ -87,6 +91,11 @@ class RiskManager:
             self.logger.warning("Risk manager is already running")
             return
         
+        # 延迟导入并初始化controller
+        if self.controller is None:
+            from .controller import RiskController
+            self.controller = RiskController(self.config, self.event_bus)
+        
         self.logger.info("Starting risk manager")
         self.is_running = True
         
@@ -107,7 +116,8 @@ class RiskManager:
         
         # 停止子模块
         self.monitor.stop()
-        self.controller.stop()
+        if self.controller:
+            self.controller.stop()
         
         # 发布停止事件
         self.event_bus.publish('risk_manager.stopped', {'timestamp': datetime.now()})

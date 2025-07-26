@@ -15,8 +15,8 @@ from enum import Enum
 from typing import Dict, Any, Optional, Union
 from dataclasses import dataclass, field
 from decimal import Decimal
-from ..common.models import SignalType
-from ..common.models.strategy import SignalStrength
+from src.common.models import SignalType
+from src.common.models.strategy import SignalStrength
 
 
 class SignalSource(Enum):

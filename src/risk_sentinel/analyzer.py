@@ -9,16 +9,23 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
 from scipy import stats
-from sklearn.covariance import EmpiricalCovariance
 import warnings
 warnings.filterwarnings('ignore')
+
+# 可选依赖导入
+try:
+    from sklearn.covariance import EmpiricalCovariance
+    HAS_SKLEARN = True
+except ImportError:
+    HAS_SKLEARN = False
+    EmpiricalCovariance = None
 
 from .models import (
     RiskType, RiskLevel, RiskMetric, RiskEvent, StressTestScenario, RiskConfig
 )
-from ..common.logger import get_logger
-from ..portfolio_manager.models import Portfolio, Position
-from ..datahub.data_manager import DataManager
+from src.common.logging import get_logger
+from src.portfolio_manager.models import Portfolio, Position
+from src.datahub.data_manager import DataManager
 
 
 @dataclass

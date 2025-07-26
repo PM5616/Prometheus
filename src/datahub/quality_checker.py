@@ -27,6 +27,48 @@ from src.common.models import QualityLevel, CheckType
 from src.common.exceptions.data import DataQualityError, DataValidationError
 
 
+class Severity(Enum):
+    """严重程度枚举"""
+    INFO = "info"
+    WARNING = "warning"
+    ERROR = "error"
+    CRITICAL = "critical"
+
+
+@dataclass
+class QualityCheck:
+    """质量检查基础类"""
+    name: str
+    description: str
+    check_type: CheckType
+    severity: Severity = Severity.WARNING
+    enabled: bool = True
+    threshold: float = 0.95
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    
+    def execute(self, data: Any) -> 'QualityResult':
+        """执行质量检查
+        
+        Args:
+            data: 待检查的数据
+            
+        Returns:
+            QualityResult: 检查结果
+        """
+        raise NotImplementedError("子类必须实现execute方法")
+    
+    def validate_data(self, data: Any) -> bool:
+        """验证数据是否适用于此检查
+        
+        Args:
+            data: 待验证的数据
+            
+        Returns:
+            bool: 是否适用
+        """
+        return True
+
+
 @dataclass
 class QualityRule:
     """质量规则"""

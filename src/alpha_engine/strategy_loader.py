@@ -24,8 +24,8 @@ import hashlib
 import json
 
 from .base_strategy import BaseStrategy, StrategyConfig
-from ..common.exceptions.strategy_exceptions import StrategyLoadError, StrategyValidationError
-from ..common.logging.logger import get_logger
+from src.common.exceptions.strategy_exceptions import StrategyLoadError, StrategyValidationError
+from src.common.logging.logger import get_logger
 
 
 @dataclass

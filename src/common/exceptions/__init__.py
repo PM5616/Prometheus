@@ -10,7 +10,7 @@ from .base import (
     AuthenticationError,
     AuthorizationError,
     NetworkError,
-    TimeoutError,
+    PrometheusTimeoutError,
     RateLimitError,
     DataError,
     ProcessingError
@@ -54,6 +54,97 @@ from .data import (
     DataSyncError
 )
 
+from .strategy_exceptions import (
+    StrategyException as StrategyExceptionNew,
+    StrategyInitializationError,
+    StrategyConfigurationError,
+    StrategyExecutionError as StrategyExecutionErrorNew,
+    StrategyParameterError,
+    StrategySignalError,
+    StrategyBacktestError,
+    StrategyOptimizationError,
+    StrategyValidationError,
+    StrategyTimeoutError,
+    StrategyResourceError,
+    StrategyDataError,
+    StrategyModelError,
+    StrategyIndicatorError,
+    StrategyRiskError,
+    StrategyManagerError,
+    StrategyError,
+    StrategyConfigError,
+    StrategyLoadError
+)
+
+from .execution import (
+    ExecutionException,
+    OrderExecutionError,
+    OrderValidationError,
+    OrderTimeoutError,
+    OrderCancellationError,
+    OrderModificationError,
+    InsufficientBalanceError as InsufficientBalanceErrorExec,
+    InsufficientLiquidityError,
+    PriceDeviationError,
+    SlippageExceededError,
+    ExecutionEngineError,
+    BrokerConnectionError,
+    BrokerAPIError,
+    TradeExecutionError,
+    PositionManagementError,
+    RiskCheckError,
+    ExecutionLatencyError,
+    OrderBookError,
+    FillReportError,
+    ExecutionReportError
+)
+
+from .monitor_exceptions import (
+    MonitorException,
+    MonitorInitializationError,
+    MonitorConfigurationError,
+    MetricCollectionError,
+    MetricValidationError,
+    AlertGenerationError,
+    AlertDeliveryError,
+    DashboardError,
+    ReportGenerationError,
+    PerformanceMonitorError,
+    SystemMonitorError,
+    HealthCheckError,
+    LoggingError,
+    AuditError,
+    MonitoringServiceError,
+    ThresholdExceededError,
+    MonitorTimeoutError,
+    DataCollectionError,
+    MonitorResourceError,
+    NotificationError
+)
+
+from .backtest import (
+    BacktestException,
+    BacktestInitializationError,
+    BacktestConfigurationError,
+    BacktestDataError,
+    BacktestExecutionError,
+    BacktestValidationError,
+    BacktestResultError,
+    BacktestReportError,
+    BacktestEngineError,
+    HistoricalDataError,
+    SimulationError,
+    PerformanceCalculationError,
+    BenchmarkError,
+    BacktestTimeoutError,
+    BacktestResourceError,
+    StrategyBacktestError,
+    PortfolioBacktestError,
+    RiskBacktestError,
+    OptimizationError,
+    WalkForwardError
+)
+
 __all__ = [
     # Base exceptions
     'PrometheusException',
@@ -62,7 +153,7 @@ __all__ = [
     'AuthenticationError',
     'AuthorizationError',
     'NetworkError',
-    'TimeoutError',
+    'PrometheusTimeoutError',
     'RateLimitError',
     'DataError',
     'ProcessingError',
@@ -84,6 +175,7 @@ __all__ = [
     'StrategyExecutionError',
     'SignalGenerationError',
     'BacktestError',
+    'StrategyError',
     
     # Risk exceptions
     'RiskException',
@@ -99,8 +191,100 @@ __all__ = [
     'DataQualityError',
     'DataNotFoundError',
     'DataFormatError',
-    'DataSyncError'
+    'DataSyncError',
+    
+    # Strategy exceptions (new)
+    'StrategyExceptionNew',
+    'StrategyInitializationError',
+    'StrategyConfigurationError',
+    'StrategyExecutionErrorNew',
+    'StrategyParameterError',
+    'StrategySignalError',
+    'StrategyBacktestError',
+    'StrategyOptimizationError',
+    'StrategyValidationError',
+    'StrategyTimeoutError',
+    'StrategyResourceError',
+    'StrategyDataError',
+    'StrategyModelError',
+    'StrategyIndicatorError',
+    'StrategyRiskError',
+    'StrategyManagerError',
+    'StrategyError',
+    'StrategyConfigError',
+    'StrategyLoadError',
+    
+    # Execution exceptions
+    'ExecutionException',
+    'OrderExecutionError',
+    'OrderValidationError',
+    'OrderTimeoutError',
+    'OrderCancellationError',
+    'OrderModificationError',
+    'InsufficientBalanceErrorExec',
+    'InsufficientLiquidityError',
+    'PriceDeviationError',
+    'SlippageExceededError',
+    'ExecutionEngineError',
+    'BrokerConnectionError',
+    'BrokerAPIError',
+    'TradeExecutionError',
+    'PositionManagementError',
+    'RiskCheckError',
+    'ExecutionLatencyError',
+    'OrderBookError',
+    'FillReportError',
+    'ExecutionReportError',
+    
+    # Monitor exceptions
+    'MonitorException',
+    'MonitorInitializationError',
+    'MonitorConfigurationError',
+    'MetricCollectionError',
+    'MetricValidationError',
+    'AlertGenerationError',
+    'AlertDeliveryError',
+    'DashboardError',
+    'ReportGenerationError',
+    'PerformanceMonitorError',
+    'SystemMonitorError',
+    'HealthCheckError',
+    'LoggingError',
+    'AuditError',
+    'MonitoringServiceError',
+    'ThresholdExceededError',
+    'MonitorTimeoutError',
+    'DataCollectionError',
+    'MonitorResourceError',
+    'NotificationError',
+    
+    # Backtest exceptions
+    'BacktestException',
+    'BacktestInitializationError',
+    'BacktestConfigurationError',
+    'BacktestDataError',
+    'BacktestExecutionError',
+    'BacktestValidationError',
+    'BacktestResultError',
+    'BacktestReportError',
+    'BacktestEngineError',
+    'HistoricalDataError',
+    'SimulationError',
+    'PerformanceCalculationError',
+    'BenchmarkError',
+    'BacktestTimeoutError',
+    'BacktestResourceError',
+    'StrategyBacktestError',
+    'PortfolioBacktestError',
+    'RiskBacktestError',
+    'OptimizationError',
+    'WalkForwardError'
 ]
+
+# 为了向后兼容，保留一些常用的别名
+GatewayError = PrometheusException
+DataHubError = DataError
+TimeoutError = PrometheusTimeoutError  # 向后兼容别名
 
 __version__ = "1.0.0"
 __author__ = "Prometheus Trading System"

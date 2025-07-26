@@ -20,8 +20,8 @@ from enum import Enum
 import json
 from collections import deque, defaultdict
 
-from ..common.logging.logger import get_logger
-from ..common.exceptions.monitor_exceptions import MonitorError
+from src.common.logging.logger import get_logger
+from src.common.exceptions.monitor_exceptions import MonitorError
 
 
 class MetricType(Enum):

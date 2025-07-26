@@ -30,8 +30,8 @@ from .circuit_breaker import CircuitBreaker, CircuitBreakerConfig
 from .load_balancer import LoadBalancer, LoadBalancerConfig
 from .converter import ProtocolConverter
 from .middleware import MiddlewareChain
-from ..common.logging.logger import get_logger
-from ..common.exceptions.gateway_exceptions import GatewayError, AuthenticationError, RateLimitError
+from src.common.logging import get_logger
+from src.common.exceptions.gateway_exceptions import GatewayError, AuthenticationError, RateLimitError
 
 
 class GatewayStatus(Enum):

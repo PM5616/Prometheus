@@ -20,9 +20,9 @@ from dataclasses import dataclass, field, asdict
 from enum import Enum
 from pathlib import Path
 
-from ..common.logging import get_logger
-from ..common.exceptions.backtest import BacktestConfigError
-from ..common.models import OrderType
+from src.common.logging import get_logger
+from src.common.exceptions.backtest import BacktestConfigError
+from src.common.models import OrderType
 
 
 class BacktestMode(Enum):

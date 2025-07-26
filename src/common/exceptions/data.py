@@ -403,3 +403,277 @@ class DataQualityError(DataException):
             details['quality_score'] = quality_score
         kwargs['details'] = details
         super().__init__(message, **kwargs)
+
+
+class DataSourceError(DataException):
+    """数据源异常"""
+    
+    def __init__(self, 
+                 message: str = "Data source error occurred",
+                 source_name: Optional[str] = None,
+                 source_type: Optional[str] = None,
+                 **kwargs):
+        """初始化数据源异常
+        
+        Args:
+            message: 错误消息
+            source_name: 数据源名称
+            source_type: 数据源类型
+            **kwargs: 其他参数
+        """
+        details = kwargs.get('details', {})
+        if source_name:
+            details['source_name'] = source_name
+        if source_type:
+            details['source_type'] = source_type
+        kwargs['details'] = details
+        super().__init__(message, **kwargs)
+
+
+class DataSyncError(DataException):
+    """数据同步异常"""
+    
+    def __init__(self, 
+                 message: str = "Data synchronization failed",
+                 sync_operation: Optional[str] = None,
+                 sync_target: Optional[str] = None,
+                 **kwargs):
+        """初始化数据同步异常
+        
+        Args:
+            message: 错误消息
+            sync_operation: 同步操作
+            sync_target: 同步目标
+            **kwargs: 其他参数
+        """
+        details = kwargs.get('details', {})
+        if sync_operation:
+            details['sync_operation'] = sync_operation
+        if sync_target:
+            details['sync_target'] = sync_target
+        kwargs['details'] = details
+        super().__init__(message, **kwargs)
+
+
+class DataProcessingError(DataException):
+    """数据处理异常"""
+    
+    def __init__(self, 
+                 message: str = "Data processing failed",
+                 processing_stage: Optional[str] = None,
+                 processor_name: Optional[str] = None,
+                 **kwargs):
+        """初始化数据处理异常
+        
+        Args:
+            message: 错误消息
+            processing_stage: 处理阶段
+            processor_name: 处理器名称
+            **kwargs: 其他参数
+        """
+        details = kwargs.get('details', {})
+        if processing_stage:
+            details['processing_stage'] = processing_stage
+        if processor_name:
+            details['processor_name'] = processor_name
+        kwargs['details'] = details
+        super().__init__(message, **kwargs)
+
+
+class DataManagerError(DataException):
+    """数据管理器异常"""
+    
+    def __init__(self, 
+                 message: str = "Data manager error occurred",
+                 manager_operation: Optional[str] = None,
+                 **kwargs):
+        """初始化数据管理器异常
+        
+        Args:
+            message: 错误消息
+            manager_operation: 管理器操作
+            **kwargs: 其他参数
+        """
+        details = kwargs.get('details', {})
+        if manager_operation:
+            details['manager_operation'] = manager_operation
+        kwargs['details'] = details
+        super().__init__(message, **kwargs)
+
+
+class DataProviderError(DataException):
+    """数据提供者异常
+    
+    当数据提供者操作失败时抛出此异常。
+    """
+    
+    def __init__(self, 
+                 message: str = "Data provider operation failed",
+                 provider_name: Optional[str] = None,
+                 operation: Optional[str] = None,
+                 **kwargs):
+        """初始化数据提供者异常
+        
+        Args:
+            message: 错误消息
+            provider_name: 提供者名称
+            operation: 操作类型
+            **kwargs: 其他参数
+        """
+        details = kwargs.get('details', {})
+        if provider_name:
+            details['provider_name'] = provider_name
+        if operation:
+            details['operation'] = operation
+        kwargs['details'] = details
+        super().__init__(message, **kwargs)
+
+
+class DataStorageError(DataException):
+    """数据存储错误"""
+    
+    def __init__(self, 
+                 message: str = "Data storage error occurred",
+                 storage_type: Optional[str] = None,
+                 storage_operation: Optional[str] = None,
+                 **kwargs):
+        """初始化数据存储异常
+        
+        Args:
+            message: 错误消息
+            storage_type: 存储类型
+            storage_operation: 存储操作
+            **kwargs: 其他参数
+        """
+        details = kwargs.get('details', {})
+        if storage_type:
+            details['storage_type'] = storage_type
+        if storage_operation:
+            details['storage_operation'] = storage_operation
+        kwargs['details'] = details
+        super().__init__(message, **kwargs)
+
+
+class DataProcessingError(DataException):
+    """数据处理错误"""
+    
+    def __init__(self, 
+                 message: str = "Data processing error occurred",
+                 processing_stage: Optional[str] = None,
+                 data_type: Optional[str] = None,
+                 **kwargs):
+        """初始化数据处理异常
+        
+        Args:
+            message: 错误消息
+            processing_stage: 处理阶段
+            data_type: 数据类型
+            **kwargs: 其他参数
+        """
+        details = kwargs.get('details', {})
+        if processing_stage:
+            details['processing_stage'] = processing_stage
+        if data_type:
+            details['data_type'] = data_type
+        kwargs['details'] = details
+        super().__init__(message, **kwargs)
+
+
+class DataRoutingError(DataException):
+    """数据路由错误"""
+    
+    def __init__(self, 
+                 message: str = "Data routing error occurred",
+                 route_target: Optional[str] = None,
+                 routing_rule: Optional[str] = None,
+                 **kwargs):
+        """初始化数据路由异常
+        
+        Args:
+            message: 错误消息
+            route_target: 路由目标
+            routing_rule: 路由规则
+            **kwargs: 其他参数
+        """
+        details = kwargs.get('details', {})
+        if route_target:
+            details['route_target'] = route_target
+        if routing_rule:
+            details['routing_rule'] = routing_rule
+        kwargs['details'] = details
+        super().__init__(message, **kwargs)
+
+
+class DataPipelineError(DataException):
+    """数据管道错误"""
+    
+    def __init__(self, 
+                 message: str = "Data pipeline error occurred",
+                 pipeline_stage: Optional[str] = None,
+                 stage_type: Optional[str] = None,
+                 **kwargs):
+        """初始化数据管道异常
+        
+        Args:
+            message: 错误消息
+            pipeline_stage: 管道阶段
+            stage_type: 阶段类型
+            **kwargs: 其他参数
+        """
+        details = kwargs.get('details', {})
+        if pipeline_stage:
+            details['pipeline_stage'] = pipeline_stage
+        if stage_type:
+            details['stage_type'] = stage_type
+        kwargs['details'] = details
+        super().__init__(message, **kwargs)
+
+
+class DataMonitorError(DataException):
+    """数据监控错误"""
+    
+    def __init__(self, 
+                 message: str = "Data monitor error occurred",
+                 monitor_type: Optional[str] = None,
+                 metric_name: Optional[str] = None,
+                 **kwargs):
+        """初始化数据监控异常
+        
+        Args:
+            message: 错误消息
+            monitor_type: 监控类型
+            metric_name: 指标名称
+            **kwargs: 其他参数
+        """
+        details = kwargs.get('details', {})
+        if monitor_type:
+            details['monitor_type'] = monitor_type
+        if metric_name:
+            details['metric_name'] = metric_name
+        kwargs['details'] = details
+        super().__init__(message, **kwargs)
+
+
+class DataCacheError(DataException):
+    """数据缓存错误"""
+    
+    def __init__(self, 
+                 message: str = "Data cache error occurred",
+                 cache_type: Optional[str] = None,
+                 cache_operation: Optional[str] = None,
+                 **kwargs):
+        """初始化数据缓存异常
+        
+        Args:
+            message: 错误消息
+            cache_type: 缓存类型
+            cache_operation: 缓存操作
+            **kwargs: 其他参数
+        """
+        details = kwargs.get('details', {})
+        if cache_type:
+            details['cache_type'] = cache_type
+        if cache_operation:
+            details['cache_operation'] = cache_operation
+        kwargs['details'] = details
+        super().__init__(message, **kwargs)

@@ -23,8 +23,8 @@ import uuid
 import math
 import numpy as np
 
-from ..common.logging import get_logger
-from ..common.exceptions.execution import ExecutionAlgorithmError
+from src.common.logging import get_logger
+from src.common.exceptions.execution import ExecutionAlgorithmError
 from .engine import ExecutionOrder, Trade, OrderStatus, OrderType, OrderSide
 
 

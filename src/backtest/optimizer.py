@@ -38,8 +38,8 @@ try:
 except ImportError:
     SKLEARN_AVAILABLE = False
 
-from ..common.logging import get_logger
-from ..common.exceptions.backtest import BacktestOptimizationError
+from src.common.logging import get_logger
+from src.common.exceptions.backtest import BacktestOptimizationError
 from .metrics import BacktestMetrics, MetricsCalculator
 
 

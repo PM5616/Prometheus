@@ -5,7 +5,8 @@
 """
 
 from typing import List, Optional
-from pydantic import BaseSettings, Field, validator
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
@@ -27,14 +28,28 @@ class DatabaseSettings(BaseSettings):
     influxdb_token: str = Field(..., env="INFLUXDB_TOKEN")
     influxdb_org: str = Field(..., env="INFLUXDB_ORG")
     influxdb_bucket: str = Field(..., env="INFLUXDB_BUCKET")
+    
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "extra": "allow"
+    }
 
 
 class BinanceSettings(BaseSettings):
     """币安API配置"""
     
-    api_key: str = Field(..., env="BINANCE_API_KEY")
-    secret_key: str = Field(..., env="BINANCE_SECRET_KEY")
+    api_key: str = Field("your_binance_api_key_here", env="BINANCE_API_KEY")
+    secret_key: str = Field("your_binance_secret_key_here", env="BINANCE_SECRET_KEY")
     testnet: bool = Field(True, env="BINANCE_TESTNET")
+    
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "extra": "allow"
+    }
     
     # API端点
     base_url: str = "https://api.binance.com"
@@ -76,7 +91,15 @@ class TradingSettings(BaseSettings):
     # 滑点控制
     max_slippage: float = Field(0.001, env="MAX_SLIPPAGE")
     
-    @validator('symbols', pre=True)
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "extra": "allow"
+    }
+    
+    @field_validator('symbols', mode='before')
+    @classmethod
     def parse_symbols(cls, v):
         """解析交易对列表"""
         if isinstance(v, str):
@@ -99,6 +122,13 @@ class RiskSettings(BaseSettings):
     
     # 风险检查频率（秒）
     check_interval: int = Field(5, env="RISK_CHECK_INTERVAL")
+    
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "extra": "allow"
+    }
 
 
 class MonitoringSettings(BaseSettings):
@@ -115,20 +145,40 @@ class MonitoringSettings(BaseSettings):
     alert_email_enabled: bool = Field(False, env="ALERT_EMAIL_ENABLED")
     alert_webhook_enabled: bool = Field(False, env="ALERT_WEBHOOK_ENABLED")
     alert_webhook_url: Optional[str] = Field(None, env="ALERT_WEBHOOK_URL")
+    
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "extra": "allow"
+    }
 
 
 class LoggingSettings(BaseSettings):
     """日志配置"""
     
     level: str = Field("INFO", env="LOG_LEVEL")
+    console_level: str = Field("INFO", env="LOG_CONSOLE_LEVEL")
+    file_level: str = Field("DEBUG", env="LOG_FILE_LEVEL")
     format: str = Field(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         env="LOG_FORMAT"
     )
-    max_file_size: str = Field("10MB", env="LOG_MAX_FILE_SIZE")
+    log_dir: str = Field("logs", env="LOG_DIR")
+    max_file_size: int = Field(10485760, env="LOG_MAX_FILE_SIZE")  # 10MB in bytes
     backup_count: int = Field(5, env="LOG_BACKUP_COUNT")
+    colored_output: bool = Field(True, env="LOG_COLORED_OUTPUT")
+    enable_database_logging: bool = Field(False, env="LOG_ENABLE_DATABASE")
     
-    @validator('level')
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "extra": "allow"
+    }
+    
+    @field_validator('level')
+    @classmethod
     def validate_log_level(cls, v):
         """验证日志级别"""
         valid_levels = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
@@ -140,13 +190,20 @@ class LoggingSettings(BaseSettings):
 class SecuritySettings(BaseSettings):
     """安全配置"""
     
-    secret_key: str = Field(..., env="SECRET_KEY")
-    jwt_secret: str = Field(..., env="JWT_SECRET")
-    encryption_key: str = Field(..., env="ENCRYPTION_KEY")
+    secret_key: str = Field("your_secret_key_here", env="SECRET_KEY")
+    jwt_secret: str = Field("your_jwt_secret_here", env="JWT_SECRET")
+    encryption_key: str = Field("your_encryption_key_here", env="ENCRYPTION_KEY")
     
     # JWT配置
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 30
+    
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "extra": "allow"
+    }
 
 
 class Settings(BaseSettings):
@@ -159,19 +216,23 @@ class Settings(BaseSettings):
     debug: bool = Field(True, env="DEBUG")
     timezone: str = Field("UTC", env="TIMEZONE")
     
-    # 子配置
-    database: DatabaseSettings = DatabaseSettings()
-    binance: BinanceSettings = BinanceSettings()
-    trading: TradingSettings = TradingSettings()
-    risk: RiskSettings = RiskSettings()
-    monitoring: MonitoringSettings = MonitoringSettings()
-    logging: LoggingSettings = LoggingSettings()
-    security: SecuritySettings = SecuritySettings()
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "extra": "allow"
+    }
     
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = False
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # 初始化子配置
+        self.database = DatabaseSettings()
+        self.binance = BinanceSettings()
+        self.trading = TradingSettings()
+        self.risk = RiskSettings()
+        self.monitoring = MonitoringSettings()
+        self.logging = LoggingSettings()
+        self.security = SecuritySettings()
 
 
 @lru_cache()

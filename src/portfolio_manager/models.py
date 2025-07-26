@@ -9,8 +9,8 @@ from decimal import Decimal
 from enum import Enum
 from typing import Dict, List, Optional, Any
 from uuid import UUID, uuid4
-from ..common.models import SignalType, RiskLevel
-from ..common.models.strategy import SignalStrength
+from src.common.models import SignalType, RiskLevel
+from src.common.models.strategy import SignalStrength
 
 
 class PositionType(Enum):
@@ -35,7 +35,7 @@ class Signal:
     strategy_id: str = ""
     symbol: str = ""
     signal_type: SignalType = SignalType.HOLD
-    strength: SignalStrength = SignalStrength.MEDIUM
+    strength: SignalStrength = SignalStrength.MODERATE
     confidence: float = 0.0  # 0-1之间
     target_price: Optional[Decimal] = None
     stop_loss: Optional[Decimal] = None
@@ -55,7 +55,7 @@ class Signal:
         """获取信号权重"""
         strength_weights = {
             SignalStrength.WEAK: 0.25,
-            SignalStrength.MEDIUM: 0.5,
+            SignalStrength.MODERATE: 0.5,
             SignalStrength.STRONG: 0.75,
             SignalStrength.VERY_STRONG: 1.0
         }

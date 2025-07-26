@@ -202,6 +202,13 @@ class CorrelationRiskError(RiskException):
         super().__init__(message, risk_type="correlation", **kwargs)
 
 
+# 为了向后兼容，创建别名
+PositionSizeError = PositionSizeExceededError
+DrawdownLimitError = DrawdownExceededError
+VolatilityLimitError = VolatilityRiskError
+ExposureLimitError = ConcentrationRiskError
+
+
 class LiquidityRiskError(RiskException):
     """流动性风险异常"""
     

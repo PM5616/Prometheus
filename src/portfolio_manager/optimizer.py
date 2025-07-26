@@ -12,8 +12,8 @@ from typing import Dict, List, Optional, Tuple, Any
 from scipy.optimize import minimize
 from scipy import linalg
 
-from ..common.exceptions.base import PrometheusException
-from ..common.models.base import BaseModel
+from src.common.exceptions.base import PrometheusException
+from src.common.models.base import BaseModel
 from .models import Portfolio, OptimizationConfig
 
 

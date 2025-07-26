@@ -520,3 +520,140 @@ def normalize_data(data: Union[List[float], np.ndarray],
     except Exception as e:
         logger.error(f"Error normalizing data: {e}")
         return np.array(data)
+
+
+def validate_symbol(symbol: str) -> bool:
+    """验证交易对符号格式
+    
+    Args:
+        symbol: 交易对符号
+        
+    Returns:
+        bool: 是否有效
+    """
+    try:
+        if not symbol or not isinstance(symbol, str):
+            return False
+        
+        # 基本格式检查
+        symbol = symbol.strip().upper()
+        
+        # 检查长度
+        if len(symbol) < 3 or len(symbol) > 20:
+            return False
+        
+        # 检查字符（只允许字母和数字）
+        if not symbol.replace('/', '').replace('-', '').replace('_', '').isalnum():
+            return False
+        
+        return True
+    except Exception as e:
+        logger.error(f"Error validating symbol {symbol}: {e}")
+        return False
+
+
+def normalize_symbol(symbol: str, format_type: str = 'standard') -> str:
+    """标准化交易对符号
+    
+    Args:
+        symbol: 原始交易对符号
+        format_type: 格式类型 ('standard', 'binance', 'okx')
+        
+    Returns:
+        str: 标准化后的符号
+    """
+    try:
+        if not symbol:
+            return ''
+        
+        # 清理和大写
+        symbol = symbol.strip().upper()
+        
+        # 移除常见分隔符
+        symbol = symbol.replace('/', '').replace('-', '').replace('_', '')
+        
+        if format_type.lower() == 'standard':
+            # 标准格式：BTC/USDT
+            if len(symbol) >= 6:
+                # 假设最后3-4个字符是计价货币
+                if symbol.endswith('USDT'):
+                    base = symbol[:-4]
+                    quote = symbol[-4:]
+                elif symbol.endswith(('USD', 'BTC', 'ETH')):
+                    base = symbol[:-3]
+                    quote = symbol[-3:]
+                else:
+                    # 默认分割
+                    mid = len(symbol) // 2
+                    base = symbol[:mid]
+                    quote = symbol[mid:]
+                return f"{base}/{quote}"
+        elif format_type.lower() == 'binance':
+            # Binance格式：BTCUSDT
+            return symbol
+        elif format_type.lower() == 'okx':
+            # OKX格式：BTC-USDT
+            if len(symbol) >= 6:
+                if symbol.endswith('USDT'):
+                    base = symbol[:-4]
+                    quote = symbol[-4:]
+                elif symbol.endswith(('USD', 'BTC', 'ETH')):
+                    base = symbol[:-3]
+                    quote = symbol[-3:]
+                else:
+                    mid = len(symbol) // 2
+                    base = symbol[:mid]
+                    quote = symbol[mid:]
+                return f"{base}-{quote}"
+        
+        return symbol
+    except Exception as e:
+        logger.error(f"Error normalizing symbol {symbol}: {e}")
+        return symbol
+
+
+def parse_timeframe(timeframe: str) -> Dict[str, Union[int, str]]:
+    """解析时间周期
+    
+    Args:
+        timeframe: 时间周期字符串 (如 '1m', '5m', '1h', '1d')
+        
+    Returns:
+        Dict[str, Union[int, str]]: 解析结果
+    """
+    try:
+        if not timeframe or not isinstance(timeframe, str):
+            return {'value': 1, 'unit': 'm', 'seconds': 60}
+        
+        timeframe = timeframe.strip().lower()
+        
+        # 解析数字和单位
+        import re
+        match = re.match(r'^(\d+)([smhd])$', timeframe)
+        
+        if not match:
+            # 默认返回1分钟
+            return {'value': 1, 'unit': 'm', 'seconds': 60}
+        
+        value = int(match.group(1))
+        unit = match.group(2)
+        
+        # 计算秒数
+        unit_seconds = {
+            's': 1,
+            'm': 60,
+            'h': 3600,
+            'd': 86400
+        }
+        
+        seconds = value * unit_seconds.get(unit, 60)
+        
+        return {
+            'value': value,
+            'unit': unit,
+            'seconds': seconds,
+            'original': timeframe
+        }
+    except Exception as e:
+        logger.error(f"Error parsing timeframe {timeframe}: {e}")
+        return {'value': 1, 'unit': 'm', 'seconds': 60}

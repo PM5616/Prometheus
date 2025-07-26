@@ -315,3 +315,119 @@ def is_market_open(market: str = "crypto", dt: Optional[datetime] = None) -> boo
         market_info["end_hour"],
         market_info["timezone"]
     )
+
+
+def timestamp_to_datetime(timestamp: Union[int, float], tz: Optional[str] = None) -> datetime:
+    """将时间戳转换为datetime对象
+    
+    Args:
+        timestamp: 时间戳（秒或毫秒）
+        tz: 时区字符串，默认为UTC
+        
+    Returns:
+        datetime: datetime对象
+    """
+    try:
+        # 判断是秒还是毫秒时间戳
+        if timestamp > 1e10:  # 毫秒时间戳
+            dt = datetime.fromtimestamp(timestamp / 1000, tz=timezone.utc)
+        else:  # 秒时间戳
+            dt = datetime.fromtimestamp(timestamp, tz=timezone.utc)
+        
+        # 如果指定了时区，转换到该时区
+        if tz and tz != "UTC":
+            target_tz = pytz.timezone(tz)
+            dt = dt.astimezone(target_tz)
+        
+        return dt
+    except Exception as e:
+        logger.error(f"Error converting timestamp {timestamp} to datetime: {e}")
+        return datetime.now(timezone.utc)
+
+
+def datetime_to_timestamp(dt: datetime, milliseconds: bool = False) -> Union[int, float]:
+    """将datetime对象转换为时间戳
+    
+    Args:
+        dt: datetime对象
+        milliseconds: 是否返回毫秒时间戳
+        
+    Returns:
+        Union[int, float]: 时间戳
+    """
+    try:
+        timestamp = dt.timestamp()
+        if milliseconds:
+            return int(timestamp * 1000)
+        return timestamp
+    except Exception as e:
+        logger.error(f"Error converting datetime {dt} to timestamp: {e}")
+        return 0
+
+
+def parse_datetime(date_str: str, fmt: Optional[str] = None, timezone_str: Optional[str] = None) -> datetime:
+    """解析日期时间字符串
+    
+    Args:
+        date_str: 日期时间字符串
+        fmt: 日期格式，如果为None则自动检测
+        timezone_str: 时区名称
+        
+    Returns:
+        datetime: 解析后的datetime对象
+        
+    Raises:
+        ValueError: 解析失败时抛出
+    """
+    if not date_str:
+        raise ValueError("日期字符串不能为空")
+    
+    # 常见的日期格式
+    common_formats = [
+        '%Y-%m-%d %H:%M:%S',
+        '%Y-%m-%d %H:%M:%S.%f',
+        '%Y-%m-%dT%H:%M:%S',
+        '%Y-%m-%dT%H:%M:%S.%f',
+        '%Y-%m-%dT%H:%M:%SZ',
+        '%Y-%m-%dT%H:%M:%S.%fZ',
+        '%Y-%m-%d',
+        '%Y/%m/%d %H:%M:%S',
+        '%Y/%m/%d',
+        '%d/%m/%Y %H:%M:%S',
+        '%d/%m/%Y',
+        '%m/%d/%Y %H:%M:%S',
+        '%m/%d/%Y'
+    ]
+    
+    dt = None
+    
+    if fmt:
+        # 使用指定格式解析
+        try:
+            dt = datetime.strptime(date_str, fmt)
+        except ValueError as e:
+            raise ValueError(f"无法使用格式 '{fmt}' 解析日期字符串 '{date_str}': {e}")
+    else:
+        # 自动检测格式
+        for format_str in common_formats:
+            try:
+                dt = datetime.strptime(date_str, format_str)
+                break
+            except ValueError:
+                continue
+        
+        if dt is None:
+            raise ValueError(f"无法解析日期字符串: {date_str}")
+    
+    # 处理时区
+    if timezone_str:
+        tz = pytz.timezone(timezone_str)
+        if dt.tzinfo is None:
+            dt = tz.localize(dt)
+        else:
+            dt = dt.astimezone(tz)
+    elif dt.tzinfo is None:
+        # 如果没有指定时区且datetime没有时区信息，默认为UTC
+        dt = dt.replace(tzinfo=timezone.utc)
+    
+    return dt

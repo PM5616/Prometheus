@@ -180,7 +180,7 @@ class NetworkError(PrometheusException):
         super().__init__(message, **kwargs)
 
 
-class TimeoutError(PrometheusException):
+class PrometheusTimeoutError(PrometheusException):
     """超时错误异常"""
     
     def __init__(self, 

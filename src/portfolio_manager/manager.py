@@ -10,8 +10,8 @@ from decimal import Decimal
 from typing import Dict, List, Optional, Tuple, Any
 from uuid import UUID
 
-from ..common.exceptions.base import PrometheusException
-from ..common.models.base import BaseModel
+from src.common.exceptions.base import PrometheusException
+from src.common.models.base import BaseModel
 from .models import (
     Portfolio, Position, Signal, RiskMetrics, PerformanceMetrics,
     OptimizationConfig, RiskConfig, SignalType, PositionType, PositionStatus

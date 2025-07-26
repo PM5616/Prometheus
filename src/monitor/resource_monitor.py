@@ -20,8 +20,8 @@ from enum import Enum
 from collections import deque, defaultdict
 from datetime import datetime, timedelta
 
-from ..common.logging.logger import get_logger
-from ..common.exceptions.monitor_exceptions import MonitorError
+from src.common.logging.logger import get_logger
+from src.common.exceptions.monitor_exceptions import MonitorError
 
 
 class ResourceType(Enum):
@@ -34,7 +34,7 @@ class ResourceType(Enum):
     GPU = "gpu"
 
 
-from ..common.models import AlertLevel
+from src.common.models import AlertLevel
 
 
 @dataclass

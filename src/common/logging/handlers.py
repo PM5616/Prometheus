@@ -8,10 +8,15 @@ import json
 import smtplib
 import threading
 from datetime import datetime
-from email.mime.text import MimeText
-from email.mime.multipart import MimeMultipart
 from typing import Dict, Any, Optional, List
 from pathlib import Path
+
+try:
+    from email.mime.text import MimeText
+    from email.mime.multipart import MimeMultipart
+except ImportError:
+    MimeText = None
+    MimeMultipart = None
 
 try:
     import psycopg2
