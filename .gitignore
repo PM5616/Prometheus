@@ -201,3 +201,6 @@ settings.ini
 .env.local
 .env.production
 .env.staging
+
+# External repositories
+binance-connector-python/
