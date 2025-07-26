@@ -28,6 +28,8 @@ from .data_transformer import DataTransformer
 from .technical_indicators import TechnicalIndicators
 from .data_validator import DataValidator
 from .stream_processor import StreamProcessor
+from .aggregator import DataAggregator
+from .filter import DataFilter
 
 # 导出的公共接口
 __all__ = [
@@ -37,5 +39,7 @@ __all__ = [
     'DataTransformer',
     'TechnicalIndicators',
     'DataValidator',
-    'StreamProcessor'
+    'StreamProcessor',
+    'DataAggregator',
+    'DataFilter'
 ]
