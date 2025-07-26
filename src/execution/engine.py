@@ -22,8 +22,8 @@ import json
 
 from ..common.logging import get_logger
 from ..common.exceptions.execution import ExecutionEngineError, OrderExecutionError
-from ..strategy.base import StrategySignal
-from ..risk.manager import RiskManager
+from ..alpha_engine.base import StrategySignal
+from ..risk_sentinel.manager import RiskManager
 
 
 class ExecutionMode(Enum):
@@ -44,36 +44,7 @@ class ExecutionStatus(Enum):
     EMERGENCY_STOP = "emergency_stop" # 紧急停止
 
 
-class OrderSide(Enum):
-    """订单方向枚举"""
-    BUY = "buy"    # 买入
-    SELL = "sell"  # 卖出
-
-
-class OrderType(Enum):
-    """订单类型枚举"""
-    MARKET = "market"            # 市价单
-    LIMIT = "limit"              # 限价单
-    STOP = "stop"                # 止损单
-    STOP_LIMIT = "stop_limit"    # 止损限价单
-    IOC = "ioc"                  # 立即成交或取消
-    FOK = "fok"                  # 全部成交或取消
-    ICEBERG = "iceberg"          # 冰山单
-    TWAP = "twap"                # 时间加权平均价格
-    VWAP = "vwap"                # 成交量加权平均价格
-
-
-class OrderStatus(Enum):
-    """订单状态枚举"""
-    PENDING = "pending"              # 待处理
-    SUBMITTED = "submitted"          # 已提交
-    ACCEPTED = "accepted"            # 已接受
-    PARTIALLY_FILLED = "partially_filled"  # 部分成交
-    FILLED = "filled"                # 已成交
-    CANCELLED = "cancelled"          # 已取消
-    REJECTED = "rejected"            # 已拒绝
-    EXPIRED = "expired"              # 已过期
-    SUSPENDED = "suspended"          # 已暂停
+from ..common.models import OrderSide, OrderType, OrderStatus
 
 
 @dataclass
@@ -539,7 +510,7 @@ class ExecutionEngine:
         Returns:
             Optional[ExecutionOrder]: 执行订单
         """
-        from ..strategy.base import SignalType
+        from ..alpha_engine.signal import SignalType
         
         if signal.signal_type == SignalType.BUY:
             side = OrderSide.BUY

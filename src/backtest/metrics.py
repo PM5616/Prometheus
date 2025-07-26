@@ -23,16 +23,7 @@ from collections import defaultdict
 
 from ..common.logging import get_logger
 from ..common.exceptions.backtest import BacktestMetricsError
-
-
-class MetricCategory(Enum):
-    """指标分类枚举"""
-    RETURN = "return"              # 收益指标
-    RISK = "risk"                  # 风险指标
-    RISK_ADJUSTED = "risk_adjusted" # 风险调整指标
-    DRAWDOWN = "drawdown"          # 回撤指标
-    TRADING = "trading"            # 交易指标
-    BENCHMARK = "benchmark"        # 基准比较指标
+from ..common.models import MetricCategory
 
 
 @dataclass

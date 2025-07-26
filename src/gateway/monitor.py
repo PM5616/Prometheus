@@ -21,38 +21,19 @@ import aiohttp
 
 from ..common.logging.logger import get_logger
 from ..common.exceptions.gateway_exceptions import MonitorError
+from ..common.models import AlertLevel, HealthStatus, MetricType
 
 
-class MetricType(Enum):
-    """指标类型"""
-    COUNTER = "counter"                  # 计数器
-    GAUGE = "gauge"                      # 仪表盘
-    HISTOGRAM = "histogram"              # 直方图
-    SUMMARY = "summary"                  # 摘要
+class TimerType(Enum):
+    """计时器类型（扩展MetricType）"""
     TIMER = "timer"                      # 计时器
-
-
-class AlertLevel(Enum):
-    """告警级别"""
-    INFO = "info"                        # 信息
-    WARNING = "warning"                  # 警告
-    ERROR = "error"                      # 错误
-    CRITICAL = "critical"                # 严重
-
-
-class HealthStatus(Enum):
-    """健康状态"""
-    HEALTHY = "healthy"                  # 健康
-    DEGRADED = "degraded"                # 降级
-    UNHEALTHY = "unhealthy"              # 不健康
-    UNKNOWN = "unknown"                  # 未知
 
 
 @dataclass
 class MetricConfig:
     """指标配置"""
     name: str
-    type: MetricType
+    type: Union[MetricType, TimerType]
     description: str = ""
     labels: List[str] = field(default_factory=list)
     buckets: List[float] = field(default_factory=lambda: [0.1, 0.5, 1.0, 2.5, 5.0, 10.0])
@@ -65,7 +46,7 @@ class MetricConfig:
 class Metric:
     """指标数据"""
     name: str
-    type: MetricType
+    type: Union[MetricType, TimerType]
     value: Union[int, float]
     labels: Dict[str, str] = field(default_factory=dict)
     timestamp: float = field(default_factory=time.time)

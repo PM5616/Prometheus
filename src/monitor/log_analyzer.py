@@ -25,16 +25,7 @@ from pathlib import Path
 
 from ..common.logging.logger import get_logger
 from ..common.exceptions.monitor_exceptions import MonitorError
-
-
-class LogLevel(Enum):
-    """日志级别"""
-    DEBUG = "DEBUG"
-    INFO = "INFO"
-    WARNING = "WARNING"
-    ERROR = "ERROR"
-    CRITICAL = "CRITICAL"
-    FATAL = "FATAL"
+from ..common.models import LogLevel
 
 
 class LogSource(Enum):

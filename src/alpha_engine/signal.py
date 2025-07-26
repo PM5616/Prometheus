@@ -15,27 +15,8 @@ from enum import Enum
 from typing import Dict, Any, Optional, Union
 from dataclasses import dataclass, field
 from decimal import Decimal
-
-
-class SignalType(Enum):
-    """信号类型枚举"""
-    BUY = "buy"                    # 买入信号
-    SELL = "sell"                  # 卖出信号
-    HOLD = "hold"                  # 持有信号
-    CLOSE_LONG = "close_long"      # 平多信号
-    CLOSE_SHORT = "close_short"    # 平空信号
-    REDUCE_LONG = "reduce_long"    # 减多信号
-    REDUCE_SHORT = "reduce_short"  # 减空信号
-    STOP_LOSS = "stop_loss"        # 止损信号
-    TAKE_PROFIT = "take_profit"    # 止盈信号
-
-
-class SignalStrength(Enum):
-    """信号强度枚举"""
-    WEAK = 1        # 弱信号
-    MODERATE = 2    # 中等信号
-    STRONG = 3      # 强信号
-    VERY_STRONG = 4 # 极强信号
+from ..common.models import SignalType
+from ..common.models.strategy import SignalStrength
 
 
 class SignalSource(Enum):

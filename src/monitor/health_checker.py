@@ -23,23 +23,10 @@ from urllib.parse import urlparse
 
 from ..common.logging.logger import get_logger
 from ..common.exceptions.monitor_exceptions import MonitorError
+from ..common.models import HealthStatus
 
 
-class HealthStatus(Enum):
-    """健康状态"""
-    HEALTHY = "healthy"
-    UNHEALTHY = "unhealthy"
-    DEGRADED = "degraded"
-    UNKNOWN = "unknown"
-
-
-class CheckType(Enum):
-    """检查类型"""
-    HTTP = "http"
-    HTTPS = "https"
-    TCP = "tcp"
-    DATABASE = "database"
-    CUSTOM = "custom"
+from ..common.models import CheckType
 
 
 @dataclass

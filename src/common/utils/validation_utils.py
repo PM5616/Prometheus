@@ -4,7 +4,9 @@
 """
 
 import re
-from typing import Any, Dict, List, Optional, Union
+import pandas as pd
+import numpy as np
+from typing import Any, Dict, List, Optional, Union, Tuple
 from decimal import Decimal
 from datetime import datetime
 from loguru import logger
@@ -521,3 +523,356 @@ def validate_config_file(config_data: Dict[str, Any]) -> tuple:
     except Exception as e:
         logger.error(f"Error validating config file: {e}")
         return False, [str(e)]
+
+
+# =============================================================================
+# 数据质量验证功能 (整合重复的验证逻辑)
+# =============================================================================
+
+def validate_dataframe_structure(df: pd.DataFrame, required_columns: List[str] = None,
+                                column_types: Dict[str, type] = None) -> Tuple[bool, List[str]]:
+    """验证DataFrame结构
+    
+    Args:
+        df: 要验证的DataFrame
+        required_columns: 必需的列名列表
+        column_types: 列类型映射
+        
+    Returns:
+        Tuple[bool, List[str]]: (验证结果, 错误信息列表)
+    """
+    try:
+        errors = []
+        
+        if not isinstance(df, pd.DataFrame):
+            return False, ["Input is not a pandas DataFrame"]
+        
+        if df.empty:
+            return False, ["DataFrame is empty"]
+        
+        # 检查必需列
+        if required_columns:
+            missing_columns = [col for col in required_columns if col not in df.columns]
+            if missing_columns:
+                errors.append(f"Missing required columns: {missing_columns}")
+        
+        # 检查列类型
+        if column_types:
+            for col, expected_type in column_types.items():
+                if col in df.columns:
+                    if expected_type == 'numeric':
+                        if not pd.api.types.is_numeric_dtype(df[col]):
+                            errors.append(f"Column '{col}' should be numeric")
+                    elif expected_type == 'datetime':
+                        if not pd.api.types.is_datetime64_any_dtype(df[col]):
+                            errors.append(f"Column '{col}' should be datetime")
+                    elif expected_type == 'string':
+                        if not pd.api.types.is_string_dtype(df[col]) and not pd.api.types.is_object_dtype(df[col]):
+                            errors.append(f"Column '{col}' should be string")
+        
+        return len(errors) == 0, errors
+    except Exception as e:
+        logger.error(f"Error validating DataFrame structure: {e}")
+        return False, [str(e)]
+
+
+def check_data_completeness(df: pd.DataFrame, missing_threshold: float = 0.1) -> Tuple[bool, Dict[str, Any]]:
+    """检查数据完整性
+    
+    Args:
+        df: 要检查的DataFrame
+        missing_threshold: 缺失值阈值 (0-1)
+        
+    Returns:
+        Tuple[bool, Dict]: (是否通过检查, 检查详情)
+    """
+    try:
+        total_cells = len(df) * len(df.columns)
+        missing_cells = df.isnull().sum().sum()
+        missing_rate = missing_cells / total_cells if total_cells > 0 else 0
+        
+        # 按列统计缺失率
+        column_missing = df.isnull().sum() / len(df)
+        high_missing_columns = column_missing[column_missing > missing_threshold].to_dict()
+        
+        details = {
+            'total_cells': total_cells,
+            'missing_cells': missing_cells,
+            'missing_rate': missing_rate,
+            'missing_threshold': missing_threshold,
+            'high_missing_columns': high_missing_columns,
+            'column_missing_rates': column_missing.to_dict()
+        }
+        
+        passed = missing_rate <= missing_threshold
+        return passed, details
+    except Exception as e:
+        logger.error(f"Error checking data completeness: {e}")
+        return False, {'error': str(e)}
+
+
+def check_data_duplicates(df: pd.DataFrame, subset: List[str] = None) -> Tuple[bool, Dict[str, Any]]:
+    """检查重复数据
+    
+    Args:
+        df: 要检查的DataFrame
+        subset: 检查重复的列子集
+        
+    Returns:
+        Tuple[bool, Dict]: (是否无重复, 检查详情)
+    """
+    try:
+        if subset:
+            duplicates = df.duplicated(subset=subset)
+        else:
+            duplicates = df.duplicated()
+        
+        duplicate_count = duplicates.sum()
+        duplicate_indices = df[duplicates].index.tolist()
+        duplicate_rate = duplicate_count / len(df) if len(df) > 0 else 0
+        
+        details = {
+            'total_records': len(df),
+            'duplicate_count': duplicate_count,
+            'duplicate_rate': duplicate_rate,
+            'duplicate_indices': duplicate_indices[:100],  # 限制返回数量
+            'subset_columns': subset
+        }
+        
+        passed = duplicate_count == 0
+        return passed, details
+    except Exception as e:
+        logger.error(f"Error checking data duplicates: {e}")
+        return False, {'error': str(e)}
+
+
+def check_data_consistency(df: pd.DataFrame, consistency_rules: Dict[str, Any] = None) -> Tuple[bool, Dict[str, Any]]:
+    """检查数据一致性
+    
+    Args:
+        df: 要检查的DataFrame
+        consistency_rules: 一致性规则字典
+        
+    Returns:
+        Tuple[bool, Dict]: (是否一致, 检查详情)
+    """
+    try:
+        issues = []
+        details = {'consistency_issues': []}
+        
+        # 检查数值列的异常值
+        numeric_columns = df.select_dtypes(include=[np.number]).columns
+        for col in numeric_columns:
+            if col in df.columns:
+                # 使用IQR方法检测异常值
+                Q1 = df[col].quantile(0.25)
+                Q3 = df[col].quantile(0.75)
+                IQR = Q3 - Q1
+                lower_bound = Q1 - 1.5 * IQR
+                upper_bound = Q3 + 1.5 * IQR
+                
+                outliers = df[(df[col] < lower_bound) | (df[col] > upper_bound)]
+                if len(outliers) > 0:
+                    issues.append(f"Column '{col}' has {len(outliers)} outliers")
+                    details['consistency_issues'].append({
+                        'column': col,
+                        'issue_type': 'outliers',
+                        'count': len(outliers),
+                        'bounds': {'lower': float(lower_bound), 'upper': float(upper_bound)}
+                    })
+        
+        # 检查自定义一致性规则
+        if consistency_rules:
+            for rule_name, rule_config in consistency_rules.items():
+                try:
+                    if rule_config['type'] == 'range_check':
+                        col = rule_config['column']
+                        min_val = rule_config.get('min')
+                        max_val = rule_config.get('max')
+                        
+                        if col in df.columns:
+                            violations = 0
+                            if min_val is not None:
+                                violations += (df[col] < min_val).sum()
+                            if max_val is not None:
+                                violations += (df[col] > max_val).sum()
+                            
+                            if violations > 0:
+                                issues.append(f"Rule '{rule_name}': {violations} violations")
+                                details['consistency_issues'].append({
+                                    'rule': rule_name,
+                                    'column': col,
+                                    'violations': violations
+                                })
+                except Exception as rule_error:
+                    logger.warning(f"Error applying consistency rule '{rule_name}': {rule_error}")
+        
+        details['total_issues'] = len(issues)
+        details['issue_summary'] = issues
+        
+        passed = len(issues) == 0
+        return passed, details
+    except Exception as e:
+        logger.error(f"Error checking data consistency: {e}")
+        return False, {'error': str(e)}
+
+
+def validate_market_data(df: pd.DataFrame) -> Tuple[bool, Dict[str, Any]]:
+    """验证市场数据
+    
+    Args:
+        df: 市场数据DataFrame
+        
+    Returns:
+        Tuple[bool, Dict]: (验证结果, 验证详情)
+    """
+    try:
+        errors = []
+        warnings = []
+        
+        # 检查必需列
+        required_columns = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        if missing_columns:
+            errors.append(f"Missing required columns: {missing_columns}")
+        
+        # 检查价格逻辑
+        if all(col in df.columns for col in ['open', 'high', 'low', 'close']):
+            # 检查 high >= max(open, close) 和 low <= min(open, close)
+            price_logic_errors = 0
+            
+            # High应该是最高价
+            high_errors = ((df['high'] < df['open']) | 
+                          (df['high'] < df['close']) | 
+                          (df['high'] < df['low'])).sum()
+            
+            # Low应该是最低价
+            low_errors = ((df['low'] > df['open']) | 
+                         (df['low'] > df['close']) | 
+                         (df['low'] > df['high'])).sum()
+            
+            price_logic_errors = high_errors + low_errors
+            
+            if price_logic_errors > 0:
+                errors.append(f"Price logic violations: {price_logic_errors} records")
+        
+        # 检查负值
+        price_columns = ['open', 'high', 'low', 'close', 'volume']
+        for col in price_columns:
+            if col in df.columns:
+                negative_count = (df[col] < 0).sum()
+                if negative_count > 0:
+                    errors.append(f"Negative values in '{col}': {negative_count} records")
+        
+        # 检查时间序列连续性
+        if 'timestamp' in df.columns:
+            if pd.api.types.is_datetime64_any_dtype(df['timestamp']):
+                time_gaps = df['timestamp'].diff().dropna()
+                if len(time_gaps) > 0:
+                    median_interval = time_gaps.median()
+                    large_gaps = (time_gaps > median_interval * 2).sum()
+                    if large_gaps > 0:
+                        warnings.append(f"Time series has {large_gaps} large gaps")
+        
+        details = {
+            'total_records': len(df),
+            'errors': errors,
+            'warnings': warnings,
+            'error_count': len(errors),
+            'warning_count': len(warnings)
+        }
+        
+        passed = len(errors) == 0
+        return passed, details
+    except Exception as e:
+        logger.error(f"Error validating market data: {e}")
+        return False, {'error': str(e)}
+
+
+def comprehensive_data_validation(df: pd.DataFrame, 
+                                validation_config: Dict[str, Any] = None) -> Dict[str, Any]:
+    """综合数据验证
+    
+    Args:
+        df: 要验证的DataFrame
+        validation_config: 验证配置
+        
+    Returns:
+        Dict: 综合验证结果
+    """
+    try:
+        config = validation_config or {}
+        results = {
+            'overall_passed': True,
+            'validation_timestamp': datetime.now().isoformat(),
+            'data_shape': df.shape,
+            'checks': {}
+        }
+        
+        # 结构验证
+        required_columns = config.get('required_columns', [])
+        column_types = config.get('column_types', {})
+        structure_passed, structure_errors = validate_dataframe_structure(
+            df, required_columns, column_types
+        )
+        results['checks']['structure'] = {
+            'passed': structure_passed,
+            'errors': structure_errors
+        }
+        if not structure_passed:
+            results['overall_passed'] = False
+        
+        # 完整性检查
+        missing_threshold = config.get('missing_threshold', 0.1)
+        completeness_passed, completeness_details = check_data_completeness(
+            df, missing_threshold
+        )
+        results['checks']['completeness'] = {
+            'passed': completeness_passed,
+            'details': completeness_details
+        }
+        if not completeness_passed:
+            results['overall_passed'] = False
+        
+        # 重复检查
+        duplicate_subset = config.get('duplicate_subset')
+        duplicates_passed, duplicates_details = check_data_duplicates(
+            df, duplicate_subset
+        )
+        results['checks']['duplicates'] = {
+            'passed': duplicates_passed,
+            'details': duplicates_details
+        }
+        if not duplicates_passed:
+            results['overall_passed'] = False
+        
+        # 一致性检查
+        consistency_rules = config.get('consistency_rules')
+        consistency_passed, consistency_details = check_data_consistency(
+            df, consistency_rules
+        )
+        results['checks']['consistency'] = {
+            'passed': consistency_passed,
+            'details': consistency_details
+        }
+        if not consistency_passed:
+            results['overall_passed'] = False
+        
+        # 市场数据特定验证
+        if config.get('market_data_validation', False):
+            market_passed, market_details = validate_market_data(df)
+            results['checks']['market_data'] = {
+                'passed': market_passed,
+                'details': market_details
+            }
+            if not market_passed:
+                results['overall_passed'] = False
+        
+        return results
+    except Exception as e:
+        logger.error(f"Error in comprehensive data validation: {e}")
+        return {
+            'overall_passed': False,
+            'error': str(e),
+            'validation_timestamp': datetime.now().isoformat()
+        }

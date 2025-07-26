@@ -49,34 +49,10 @@ class Symbol(BaseModel):
         return self.status == "TRADING"
 
 
-class OrderSide(str, Enum):
-    """订单方向"""
-    BUY = "BUY"
-    SELL = "SELL"
+from .enums import OrderSide, OrderType, OrderStatus
 
 
-class OrderType(str, Enum):
-    """订单类型"""
-    MARKET = "MARKET"
-    LIMIT = "LIMIT"
-    STOP_LOSS = "STOP_LOSS"
-    STOP_LOSS_LIMIT = "STOP_LOSS_LIMIT"
-    TAKE_PROFIT = "TAKE_PROFIT"
-    TAKE_PROFIT_LIMIT = "TAKE_PROFIT_LIMIT"
-
-
-class OrderStatus(str, Enum):
-    """订单状态"""
-    NEW = "NEW"
-    PARTIALLY_FILLED = "PARTIALLY_FILLED"
-    FILLED = "FILLED"
-    CANCELED = "CANCELED"
-    PENDING_CANCEL = "PENDING_CANCEL"
-    REJECTED = "REJECTED"
-    EXPIRED = "EXPIRED"
-
-
-class Order(BaseModel, TimestampMixin, IdentifiableMixin):
+class Order(TimestampMixin, IdentifiableMixin, BaseModel):
     """订单模型"""
     
     # 基本信息
@@ -95,7 +71,7 @@ class Order(BaseModel, TimestampMixin, IdentifiableMixin):
     avg_price: Optional[Decimal] = Field(None, description="平均成交价")
     
     # 状态
-    status: OrderStatus = Field(OrderStatus.NEW, description="订单状态")
+    status: OrderStatus = Field(OrderStatus.PENDING, description="订单状态")
     
     # 时间信息
     order_time: datetime = Field(default_factory=datetime.utcnow, description="下单时间")
@@ -149,10 +125,10 @@ class Order(BaseModel, TimestampMixin, IdentifiableMixin):
         Returns:
             bool: 是否活跃
         """
-        return self.status in [OrderStatus.NEW, OrderStatus.PARTIALLY_FILLED]
+        return self.status in [OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIALLY_FILLED]
 
 
-class Trade(BaseModel, TimestampMixin, IdentifiableMixin):
+class Trade(TimestampMixin, IdentifiableMixin, BaseModel):
     """交易记录模型"""
     
     # 基本信息
@@ -188,7 +164,7 @@ class Trade(BaseModel, TimestampMixin, IdentifiableMixin):
         return self.quantity * self.price
 
 
-class Position(BaseModel, TimestampMixin):
+class Position(TimestampMixin, BaseModel):
     """持仓模型"""
     
     # 基本信息
@@ -228,7 +204,7 @@ class Position(BaseModel, TimestampMixin):
         return self.unrealized_pnl + self.realized_pnl
 
 
-class Balance(BaseModel, TimestampMixin):
+class Balance(TimestampMixin, BaseModel):
     """余额模型"""
     
     # 资产信息

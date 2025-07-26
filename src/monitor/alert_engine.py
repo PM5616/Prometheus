@@ -21,34 +21,9 @@ from datetime import datetime, timedelta
 
 from ..common.logging.logger import get_logger
 from ..common.exceptions.monitor_exceptions import MonitorError
+from ..common.models import AlertLevel, AlertStatus, NotificationChannel
 from .system_monitor import SystemMetric, MetricType
 from .performance_analyzer import AnomalyDetection, PerformanceThreshold
-
-
-class AlertLevel(Enum):
-    """告警级别"""
-    INFO = "info"
-    WARNING = "warning"
-    CRITICAL = "critical"
-    EMERGENCY = "emergency"
-
-
-class AlertStatus(Enum):
-    """告警状态"""
-    ACTIVE = "active"
-    RESOLVED = "resolved"
-    SUPPRESSED = "suppressed"
-    ACKNOWLEDGED = "acknowledged"
-
-
-class NotificationChannel(Enum):
-    """通知渠道"""
-    EMAIL = "email"
-    SMS = "sms"
-    WEBHOOK = "webhook"
-    SLACK = "slack"
-    DINGTALK = "dingtalk"
-    WECHAT = "wechat"
 
 
 @dataclass

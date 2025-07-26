@@ -1,49 +1,43 @@
 """Alpha Engine Module
 
-策略引擎模块，系统的"大脑"，负责策略的插件化加载和交易信号生成。
+Alpha策略引擎模块，提供策略开发、回测和实盘交易的核心功能。
+整合了原strategy模块的功能，提供向后兼容性。
 
 主要功能：
-- 策略插件化管理
-- 多策略并行运行
-- 交易信号生成和分发
-- 策略性能监控
-- 策略参数动态调整
-- 策略风险控制
-
-核心组件：
-- StrategyEngine: 策略引擎核心
-- StrategyLoader: 策略加载器
-- SignalAggregator: 信号聚合器
-- PerformanceTracker: 性能跟踪器
-- StrategyManager: 策略管理器
-
-支持的策略类型：
-- 震荡套利策略 (Mean Reversion)
-- 趋势跟踪策略 (Trend Following)
-- 市场状态识别策略 (Market Regime Detection)
-- 协整配对交易策略 (Cointegration)
-- 卡尔曼滤波趋势策略 (Kalman Filter)
-- 隐马尔可夫模型策略 (HMM)
+- 策略基类和接口
+- 信号生成和管理
+- 策略加载和管理
+- 策略引擎核心
+- 兼容原strategy模块接口
 """
 
-from .engine import StrategyEngine
-from .loader import StrategyLoader
-from .aggregator import SignalAggregator
-from .tracker import PerformanceTracker
-from .manager import StrategyManager
-from .base_strategy import BaseStrategy
-from .signal import Signal, SignalType, SignalStrength
+from .base_strategy import BaseStrategy as AlphaBaseStrategy, StrategyConfig, StrategyState as AlphaStrategyState
+from .signal import Signal, SignalType, SignalStrength, SignalSource
+from .strategy_loader import StrategyLoader
+from .strategy_manager import StrategyManager
+from .engine import AlphaEngine
+
+# 兼容性导入 - 保持与原strategy模块的兼容性
+from .base import BaseStrategy, StrategySignal, StrategyParameters, StrategyState
 
 __all__ = [
-    'StrategyEngine',
-    'StrategyLoader', 
-    'SignalAggregator',
-    'PerformanceTracker',
-    'StrategyManager',
-    'BaseStrategy',
+    # Alpha Engine 核心类
+    'AlphaBaseStrategy',
+    'StrategyConfig', 
+    'AlphaStrategyState',
     'Signal',
     'SignalType',
-    'SignalStrength'
+    'SignalStrength', 
+    'SignalSource',
+    'StrategyLoader',
+    'StrategyManager',
+    'AlphaEngine',
+    
+    # 兼容性类（原strategy模块）
+    'BaseStrategy',
+    'StrategySignal',
+    'StrategyParameters',
+    'StrategyState'
 ]
 
 __version__ = '1.0.0'

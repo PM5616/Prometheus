@@ -9,22 +9,8 @@ from decimal import Decimal
 from enum import Enum
 from typing import Dict, List, Optional, Any
 from uuid import UUID, uuid4
-
-
-class SignalType(Enum):
-    """信号类型"""
-    BUY = "buy"
-    SELL = "sell"
-    HOLD = "hold"
-    CLOSE = "close"
-
-
-class SignalStrength(Enum):
-    """信号强度"""
-    WEAK = "weak"
-    MEDIUM = "medium"
-    STRONG = "strong"
-    VERY_STRONG = "very_strong"
+from ..common.models import SignalType, RiskLevel
+from ..common.models.strategy import SignalStrength
 
 
 class PositionType(Enum):
@@ -40,14 +26,6 @@ class PositionStatus(Enum):
     CLOSING = "closing"
     CLOSED = "closed"
     PENDING = "pending"
-
-
-class RiskLevel(Enum):
-    """风险等级"""
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
 
 
 @dataclass

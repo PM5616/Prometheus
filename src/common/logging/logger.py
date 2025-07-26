@@ -14,15 +14,7 @@ import json
 from datetime import datetime
 
 from ..config.settings import Settings
-
-
-class LogLevel(Enum):
-    """日志级别枚举"""
-    DEBUG = "DEBUG"
-    INFO = "INFO"
-    WARNING = "WARNING"
-    ERROR = "ERROR"
-    CRITICAL = "CRITICAL"
+from ..models import LogLevel
 
 
 class LogFormat(Enum):

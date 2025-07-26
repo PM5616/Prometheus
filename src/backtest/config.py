@@ -22,6 +22,7 @@ from pathlib import Path
 
 from ..common.logging import get_logger
 from ..common.exceptions.backtest import BacktestConfigError
+from ..common.models import OrderType
 
 
 class BacktestMode(Enum):
@@ -40,13 +41,6 @@ class DataSource(Enum):
     MEMORY = "memory"                # 内存数据
     MIXED = "mixed"                  # 混合数据源
 
-
-class OrderType(Enum):
-    """订单类型枚举"""
-    MARKET = "market"                # 市价单
-    LIMIT = "limit"                  # 限价单
-    STOP = "stop"                    # 止损单
-    STOP_LIMIT = "stop_limit"        # 止损限价单
 
 
 class CommissionType(Enum):

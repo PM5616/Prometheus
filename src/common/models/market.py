@@ -11,7 +11,7 @@ from pydantic import Field, validator
 from .base import BaseModel, TimestampMixin
 
 
-class Ticker(BaseModel, TimestampMixin):
+class Ticker(TimestampMixin, BaseModel):
     """行情数据模型"""
     
     # 基本信息
@@ -68,7 +68,7 @@ class Ticker(BaseModel, TimestampMixin):
         return None
 
 
-class Kline(BaseModel):
+class Kline(TimestampMixin, BaseModel):
     """K线数据模型"""
     
     # 基本信息
@@ -154,7 +154,7 @@ class OrderBookLevel(BaseModel):
         return self.price * self.quantity
 
 
-class OrderBook(BaseModel, TimestampMixin):
+class OrderBook(TimestampMixin, BaseModel):
     """订单簿模型"""
     
     # 基本信息
@@ -262,7 +262,7 @@ class OrderBook(BaseModel, TimestampMixin):
         return sum(level.quantity for level in levels)
 
 
-class MarketData(BaseModel, TimestampMixin):
+class MarketData(TimestampMixin, BaseModel):
     """市场数据聚合模型"""
     
     # 基本信息

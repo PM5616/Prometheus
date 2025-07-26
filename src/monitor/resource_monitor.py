@@ -34,12 +34,7 @@ class ResourceType(Enum):
     GPU = "gpu"
 
 
-class AlertLevel(Enum):
-    """告警级别"""
-    INFO = "info"
-    WARNING = "warning"
-    ERROR = "error"
-    CRITICAL = "critical"
+from ..common.models import AlertLevel
 
 
 @dataclass

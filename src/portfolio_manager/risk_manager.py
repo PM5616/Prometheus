@@ -14,22 +14,11 @@ from enum import Enum
 
 from ..common.exceptions.base import PrometheusException
 from ..common.models.base import BaseModel
+from ..common.models import RiskViolationType
 from .models import (
     Portfolio, Position, RiskMetrics, RiskConfig, 
     RiskLevel, PositionType, Signal
 )
-
-
-class RiskViolationType(Enum):
-    """风险违规类型"""
-    POSITION_SIZE = "position_size"  # 仓位大小超限
-    CONCENTRATION = "concentration"  # 集中度超限
-    LEVERAGE = "leverage"  # 杠杆超限
-    DRAWDOWN = "drawdown"  # 回撤超限
-    VAR = "var"  # VaR超限
-    CORRELATION = "correlation"  # 相关性超限
-    VOLATILITY = "volatility"  # 波动率超限
-    SECTOR_EXPOSURE = "sector_exposure"  # 行业暴露超限
 
 
 class RiskViolation:

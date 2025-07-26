@@ -10,6 +10,8 @@ from typing import Dict, List, Optional, Any, Union
 from dataclasses import dataclass, field
 from enum import Enum
 
+from ..common.models import RiskLevel, AlertType
+
 
 class RiskType(Enum):
     """风险类型"""
@@ -25,32 +27,8 @@ class RiskType(Enum):
     COMPLIANCE_RISK = "compliance_risk"  # 合规风险
 
 
-class RiskLevel(Enum):
-    """风险等级"""
-    LOW = "low"  # 低风险
-    MEDIUM = "medium"  # 中等风险
-    HIGH = "high"  # 高风险
-    CRITICAL = "critical"  # 严重风险
-    EMERGENCY = "emergency"  # 紧急风险
 
-
-class AlertType(Enum):
-    """预警类型"""
-    THRESHOLD_BREACH = "threshold_breach"  # 阈值突破
-    TREND_ALERT = "trend_alert"  # 趋势预警
-    ANOMALY_DETECTION = "anomaly_detection"  # 异常检测
-    MODEL_ALERT = "model_alert"  # 模型预警
-    COMPLIANCE_VIOLATION = "compliance_violation"  # 合规违规
-    SYSTEM_ALERT = "system_alert"  # 系统预警
-
-
-class AlertStatus(Enum):
-    """预警状态"""
-    ACTIVE = "active"  # 活跃
-    ACKNOWLEDGED = "acknowledged"  # 已确认
-    RESOLVED = "resolved"  # 已解决
-    DISMISSED = "dismissed"  # 已忽略
-    ESCALATED = "escalated"  # 已升级
+from ..common.models import AlertStatus
 
 
 class ControlAction(Enum):

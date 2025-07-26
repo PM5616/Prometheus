@@ -26,9 +26,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 from ..common.logging import get_logger
 from ..common.exceptions.backtest import BacktestError
-from ..strategy.base import BaseStrategy, StrategySignal
+from ..alpha_engine.base import BaseStrategy, StrategySignal
 from ..execution.engine import ExecutionOrder, Trade, OrderStatus, OrderType, OrderSide
-from ..risk.manager import RiskManager
+from ..risk_sentinel.manager import RiskManager
 from ..datahub.data_manager import DataManager
 
 
@@ -856,7 +856,7 @@ class BacktestEngine:
         Returns:
             Optional[ExecutionOrder]: 订单
         """
-        from ..strategy.base import SignalType
+        from ..alpha_engine.signal import SignalType
         
         # 确定订单方向
         if signal.signal_type == SignalType.BUY:

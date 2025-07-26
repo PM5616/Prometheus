@@ -23,29 +23,8 @@ import pandas as pd
 from dataclasses import dataclass, field
 
 from src.common.models.market import Ticker, Kline, OrderBook
+from src.common.models import QualityLevel, CheckType
 from src.common.exceptions.data import DataQualityError, DataValidationError
-
-
-class QualityLevel(Enum):
-    """质量等级枚举"""
-    EXCELLENT = "excellent"  # 优秀
-    GOOD = "good"  # 良好
-    FAIR = "fair"  # 一般
-    POOR = "poor"  # 较差
-    CRITICAL = "critical"  # 严重
-
-
-class CheckType(Enum):
-    """检查类型枚举"""
-    COMPLETENESS = "completeness"  # 完整性
-    ACCURACY = "accuracy"  # 准确性
-    CONSISTENCY = "consistency"  # 一致性
-    VALIDITY = "validity"  # 有效性
-    UNIQUENESS = "uniqueness"  # 唯一性
-    TIMELINESS = "timeliness"  # 及时性
-    OUTLIER = "outlier"  # 异常值
-    SCHEMA = "schema"  # 模式
-    BUSINESS_RULE = "business_rule"  # 业务规则
 
 
 @dataclass

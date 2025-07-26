@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from concurrent.futures import ThreadPoolExecutor
 
 from src.common.models.market import Ticker, Kline, OrderBook
+from src.common.models import AlertLevel, MetricType
 from src.common.exceptions.data import DataMonitorError
 
 
@@ -36,22 +37,6 @@ class MonitorType(Enum):
     THROUGHPUT = "throughput"  # 吞吐量监控
     HEALTH_CHECK = "health_check"  # 健康检查
     CUSTOM = "custom"  # 自定义监控
-
-
-class AlertLevel(Enum):
-    """告警级别枚举"""
-    INFO = "info"
-    WARNING = "warning"
-    ERROR = "error"
-    CRITICAL = "critical"
-
-
-class MetricType(Enum):
-    """指标类型枚举"""
-    COUNTER = "counter"  # 计数器
-    GAUGE = "gauge"  # 仪表盘
-    HISTOGRAM = "histogram"  # 直方图
-    SUMMARY = "summary"  # 摘要
 
 
 @dataclass

@@ -13,31 +13,16 @@ from .base import BaseModel, TimestampMixin, IdentifiableMixin
 from .trading import OrderSide
 
 
-class SignalType(str, Enum):
-    """信号类型"""
-    BUY = "BUY"
-    SELL = "SELL"
-    HOLD = "HOLD"
-    CLOSE = "CLOSE"
-    STOP_LOSS = "STOP_LOSS"
-    TAKE_PROFIT = "TAKE_PROFIT"
+from .enums import SignalType, SignalStrength
 
 
-class SignalStrength(str, Enum):
-    """信号强度"""
-    WEAK = "WEAK"
-    MEDIUM = "MEDIUM"
-    STRONG = "STRONG"
-    VERY_STRONG = "VERY_STRONG"
-
-
-class Signal(BaseModel, TimestampMixin, IdentifiableMixin):
+class Signal(TimestampMixin, IdentifiableMixin, BaseModel):
     """交易信号模型"""
     
     # 基本信息
     symbol: str = Field(..., description="交易对")
     signal_type: SignalType = Field(..., description="信号类型")
-    strength: SignalStrength = Field(SignalStrength.MEDIUM, description="信号强度")
+    strength: SignalStrength = Field(SignalStrength.MODERATE, description="信号强度")
     
     # 价格信息
     price: Decimal = Field(..., description="信号价格")
@@ -153,16 +138,10 @@ class StrategyConfig(BaseModel):
         return v
 
 
-class StrategyStatus(str, Enum):
-    """策略状态"""
-    INACTIVE = "INACTIVE"
-    ACTIVE = "ACTIVE"
-    PAUSED = "PAUSED"
-    ERROR = "ERROR"
-    STOPPED = "STOPPED"
+from .enums import StrategyStatus
 
 
-class Strategy(BaseModel, TimestampMixin, IdentifiableMixin):
+class Strategy(TimestampMixin, IdentifiableMixin, BaseModel):
     """策略模型"""
     
     # 基本信息

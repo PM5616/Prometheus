@@ -10,6 +10,7 @@ from typing import Dict, Any, Optional, List
 from pydantic import Field, validator
 
 from .base import BaseModel, TimestampMixin, IdentifiableMixin
+from .enums import AlertLevel, AlertType
 
 
 class RiskLimitType(str, Enum):
@@ -30,7 +31,7 @@ class RiskLimitStatus(str, Enum):
     CRITICAL = "CRITICAL"  # 严重
 
 
-class RiskLimit(BaseModel, TimestampMixin, IdentifiableMixin):
+class RiskLimit(TimestampMixin, IdentifiableMixin, BaseModel):
     """风险限制模型"""
     
     # 基本信息
@@ -106,7 +107,7 @@ class RiskLimit(BaseModel, TimestampMixin, IdentifiableMixin):
         return self.status in [RiskLimitStatus.BREACH, RiskLimitStatus.CRITICAL]
 
 
-class RiskMetrics(BaseModel, TimestampMixin):
+class RiskMetrics(TimestampMixin, BaseModel):
     """风险指标模型"""
     
     # 基本信息
@@ -185,26 +186,7 @@ class RiskMetrics(BaseModel, TimestampMixin):
         return min(score, 100)
 
 
-class AlertLevel(str, Enum):
-    """告警级别"""
-    INFO = "INFO"
-    WARNING = "WARNING"
-    ERROR = "ERROR"
-    CRITICAL = "CRITICAL"
-
-
-class AlertType(str, Enum):
-    """告警类型"""
-    RISK_LIMIT_BREACH = "RISK_LIMIT_BREACH"  # 风险限制违规
-    HIGH_DRAWDOWN = "HIGH_DRAWDOWN"  # 高回撤
-    POSITION_SIZE_EXCEEDED = "POSITION_SIZE_EXCEEDED"  # 仓位超限
-    DAILY_LOSS_EXCEEDED = "DAILY_LOSS_EXCEEDED"  # 日损失超限
-    SYSTEM_ERROR = "SYSTEM_ERROR"  # 系统错误
-    MARKET_ANOMALY = "MARKET_ANOMALY"  # 市场异常
-    STRATEGY_ERROR = "STRATEGY_ERROR"  # 策略错误
-
-
-class RiskAlert(BaseModel, TimestampMixin, IdentifiableMixin):
+class RiskAlert(TimestampMixin, IdentifiableMixin, BaseModel):
     """风险告警模型"""
     
     # 基本信息
@@ -278,7 +260,7 @@ class RiskAlert(BaseModel, TimestampMixin, IdentifiableMixin):
         return int((datetime.utcnow() - self.created_at).total_seconds())
 
 
-class RiskReport(BaseModel, TimestampMixin):
+class RiskReport(TimestampMixin, BaseModel):
     """风险报告模型"""
     
     # 报告信息
